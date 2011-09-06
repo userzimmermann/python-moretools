@@ -32,7 +32,7 @@ class _caller(object):
 
 class caller(_caller):
   def __call__(self, obj):
-    obj(*self.args, **self.kwargs)
+    return obj(*self.args, **self.kwargs)
 
 class partialcaller(_caller):
   def __call__(self, obj):
