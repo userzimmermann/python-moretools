@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
   name = 'python-moretools',
-  version = 0.0.1,
+  version = '0.1a',
   description = (
     'many more basic tools for python 2/3'
     + ' extending itertools, functools and operator'
