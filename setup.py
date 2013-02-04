@@ -1,15 +1,15 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
   name = 'python-moretools',
-  version = '0.1a2',
+  version = '0.1a4',
   description = (
     'many more basic tools for python 2/3'
-    + ' extending itertools, functools and operator'
+    + ' extending itertools, functools operator and collections'
     ),
 
   author = 'Stefan Zimmermann',
-  author_email = 'zimmermann.code@googlemail.com',
+  author_email = 'zimmermann.code@gmail.com',
   url = 'http://bitbucket.org/StefanZimmermann/python-moretools',
 
   license = 'LGPLv3',
@@ -29,9 +29,10 @@ setup(
     ],
 
   keywords = [
-    'tools', 'itertools', 'functools', 'operator',
+    'tools', 'itertools', 'functools', 'operator', 'collections',
     'iterator', 'iteration', 'functional',
     'filter', 'map', 'repeat', 'query',
+    'tuple', 'list', 'set', 'dict', 'simpledict',
     'python3',
     ],
   )

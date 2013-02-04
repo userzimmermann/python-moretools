@@ -3,7 +3,7 @@
 # many more basic tools for python 2/3
 # extending itertools, functools and operator
 #
-# Copyright (C) 2011 Stefan Zimmermann <zimmermann.code@googlemail.com>
+# Copyright (C) 2011-2013 Stefan Zimmermann <zimmermann.code@gmail.com>
 #
 # python-moretools is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -34,4 +34,5 @@ from ._set import *
 from ._has import *
 from ._del import *
 from ._collections import *
+from ._simpledict import *
 from ._multi import *
