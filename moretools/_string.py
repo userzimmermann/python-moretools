@@ -18,22 +18,28 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""many more basic tools for python 2/3
-extending itertools, functools and operator
-"""
+"""moretools._string
 
-from ._map import *
-from ._repeat import *
-from ._star import *
-from ._empty import *
-from ._filter import *
-from ._query import *
-from ._caller import *
-from ._get import *
-from ._set import *
-from ._has import *
-from ._del import *
-from ._collections import *
-from ._simpledict import *
-from ._multi import *
-from ._string import *
+Several string manipulation/converter functions.
+
+.. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
+"""
+__all__ = 'camelize', 'decamelize',
+
+import re as _re
+
+from ._common import *
+
+def camelize(string):
+  """Convert a *lower_case* string (with underscores) to a *CamelCase* string.
+  """
+  return _re.sub(
+    '_([a-z]?)', lambda match: match.group(1).upper(),
+    string.capitalize())
+
+def decamelize(string):
+  """Convert a *CamelCase* string to a *lower_case* string (with underscores).
+  """
+  return _re.sub(
+    '[A-Z]', lambda match: '_' + match.group().lower(),
+    string[0].lower() + string[1:])
