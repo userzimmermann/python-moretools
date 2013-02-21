@@ -43,113 +43,134 @@ class AttrToKeyToAttrMismatch(LookupError):
   def __init__(self, attrname, key, attr_from_key):
     LookupError.__init__(self, (attrname, key, attr_from_key))
 
+class SimpleDictMeta(type):
+  """The basic meta class for :class:`SimpleDictType`.
+  * Provides methods and attributes for *key*<-->*attrname* conversion checks
+  to make them only be avaiable at type level, not at instance level.
+  * :func:`simpledict` creates derived meta classes,
+  which additionally hold the custom options
+  (internal mapping type and *key*<-->*attrname* conversion functions).
+  """
+  _re_attrname = _re.compile('^[A-Za-z_][A-Za-z0-9_]*$')
+
+  def _check_attr(cls, key, attrname):
+    """Check (`key`-->)`attrname` validity.
+    """
+    if not cls._re_attrname.match(attrname):
+      if attrname.startswith('__'):
+        raise KeyToAttrError(
+          "Attribute names must not start with '__'",
+          key, attrname)
+      raise KeyToAttrError(
+        "Invalid Python identifier", key, attrname)
+
+  def _reverse_check_key(cls, key, attrname):
+    """Check reverse (`key`-->)`attrname`-->key conversion.
+    """
+    key_from_attr = cls.attr_to_key(attrname)
+    if key_from_attr != key:
+      raise KeyToAttrToKeyMismatch(key, attrname, key_from_attr)
+
+  def _reverse_check_attr(cls, attrname, key):
+    """Check reverse (`attrname`-->)`key`-->attr conversion.
+    """
+    attr_from_key = cls.key_to_attr(key)
+    if attr_from_key != attrname:
+      raise AttrToKeyToAttrMismatch(attrname, key, attr_from_key)
+
 class SimpleDictType(object):
   """A simple *mapping* type providing item value access
-  with `__getattr__`/`__setattr__`
-  using custom *key*<-->*attrname* conversion functions.
+  with `__getattr__`/`__setattr__`,
+  using custom *key*<-->*attrname* conversion functions
+  and a customizeable internal mapping type (defaults to `dict`).
 
   * Don't instantiate this class directly,
-  use the `simpledict` function to create a customized derived class
+  use :func:`simpledict` to create a customized derived class
+  * All custom options are stored in a custom meta class,
+  which is also created by the `simpledict` function.
   * Attribute name representations of mapping keys
-  must **not** start with an *underscore*.
+  must **not** start with '__'.
   * Automatically checks for valid *key*<-->*attrname* conversions
   on item insertion.
   * Doesn't provide any **non**-*special methods*.
   * `.__iter__()` returns an items (key/value pairs) iterator.
   """
-  _re_attrname = _re.compile('^[A-Za-z][A-Za-z0-9_]*$')
+  __metaclass__ = SimpleDictMeta
 
   def __init__(self, mapping = (), **items):
     """Instantiate the SimpleDictType with optional initial values.
     """
-    self._dict = self._dicttype(mapping, **items)
-    for key in self._dict.keys():
-      attrname = self._key_to_attr(key)
+    cls = type(self) # holds the helper methods and custom options
+    self.__dict__ = cls.dicttype(mapping, **items)
+    for key in self.__dict__.keys():
+      attrname = cls.key_to_attr(key)
       # check attribute name validity
       # *raises* `KeyToAttrError`
-      self._check_attr(key, attrname)
+      cls._check_attr(key, attrname)
       # check reverse attr-->key conversion
       # *raises* `KeyToAttrToKeyMismatch`
-      self._reverse_check_key(key, attrname)
-
-  def _check_attr(self, key, attrname):
-    if not self._re_attrname.match(attrname):
-      if attrname.startswith('_'):
-        raise KeyToAttrError(
-          'Attribute names must not start with an underscore',
-          key, attrname)
-      raise KeyToAttrError(
-        'Invalid Python identifier', key, attrname)
-
-  def _reverse_check_key(self, key, attrname):
-    """Check reverse attr-->key conversion.
-    """
-    key_from_attr = self._attr_to_key(attrname)
-    if key_from_attr != key:
-      raise KeyToAttrToKeyMismatch(key, attrname, key_from_attr)
-
-  def _reverse_check_attr(self, attrname, key):
-    """Check reverse key-->attr conversion.
-    """
-    attr_from_key = self._key_to_attr(key)
-    if attr_from_key != attrname:
-      raise AttrToKeyToAttrMismatch(attrname, key, attr_from_key)
+      cls._reverse_check_key(key, attrname)
 
   def __getattr__(self, name):
+    cls = type(self) # holds the helper methods and custom options
     try:
-      key = self._attr_to_key(name)
-      return self._dict[key]
+      key = cls.attr_to_key(name)
+      return self.__dict__[key]
     except KeyError:
       raise AttributeError(name)
 
   def __setattr__(self, name, value):
-    if name.startswith('_'): # is real (internal) attribute?
+    cls = type(self) # holds the helper methods and custom options
+    if name.startswith('__'): # is real (internal) attribute?
       object.__setattr__(self, name, value)
-    else: # convert name to key and store in `self._dict`
-      key = self._attr_to_key(name)
+    else: # convert name to key and store in `self.__dict__`
+      key = cls.attr_to_key(name)
       # check reverse key-->attr conversion
       # *raises* `AttrToKeyToAttrMismatch`
-      self._reverse_check_attr(name, key)
+      cls._reverse_check_attr(name, key)
       # accept name/value pair
-      self._dict[key] = value
+      self.__dict__[key] = value
 
   def __delattr__(self, name):
-    if name.startswith('_'): # is real (internal) attribute?
+    cls = type(self) # holds the helper methods and custom options
+    if name.startswith('__'): # is real (internal) attribute?
       raise AttributeError(name)
-    key = self._attr_to_key(name)
-    del self._dict[key]
+    key = cls.attr_to_key(name)
+    del self.__dict__[key]
 
   def __dir__(self):
-    return [self._key_to_attr(key) for key in self._dict.keys()]
+    cls = type(self)
+    return [cls.key_to_attr(key) for key in self.__dict__.keys()]
 
   def __iter__(self):
-    return iter(self._dict.items())
+    return iter(self.__dict__.items())
 
   def __len__(self):
-    return len(self._dict)
+    return len(self.__dict__)
 
   def __setitem__(self, key, value):
-    attrname = str(self._key_to_attr(key))
+    cls = type(self) # holds the helper methods and custom options
+    attrname = str(cls.key_to_attr(key))
     # check attribute name validity
     # *raises* `KeyToAttrError`
-    self._check_attr(key, attrname)
+    cls._check_attr(key, attrname)
     # check reverse attr-->key conversion
     # *raises* `KeyToAttrToKeyMismatch`
-    self._reverse_check_key(key, attrname)
+    cls._reverse_check_key(key, attrname)
     # accept the key/value pair
-    self._dict[key] = value
+    self.__dict__[key] = value
 
   def __getitem__(self, key):
-    return self._dict[key]
+    return self.__dict__[key]
 
   def __delitem__(self, key):
-    del self._dict[key]
+    del self.__dict__[key]
 
   def __repr__(self):
-    return 'simpledict(%s)' % repr(self._dict)
+    return 'simpledict(%s)' % repr(self.__dict__)
 
 def simpledict(
-  name, dicttype = dict,
+  typename, dicttype = dict,
   key_to_attr = lambda key: key, attr_to_key = lambda name: name
   ):
   """Create a custom :class:`SimpleDictType`-derived type.
@@ -160,12 +181,16 @@ def simpledict(
   :param attr_to_key: The *function*
   used for items' *attrname*-->*key* conversions.
   """
-  attrs = dict(
-    _dicttype = dicttype,
-    _key_to_attr = staticmethod(key_to_attr),
-    _attr_to_key = staticmethod(attr_to_key),
+  # first create a custom :class:`SimpleDictMeta`-derived meta type
+  # holding the custom options
+  metaclsattrs = dict(
+    dicttype = dicttype,
+    key_to_attr = staticmethod(key_to_attr),
+    attr_to_key = staticmethod(attr_to_key),
     )
-  return type(name, (SimpleDictType,), attrs)
+  metacls = type(typename + 'Meta', (SimpleDictMeta,), metaclsattrs)
+  # then create the actual simpledict type from the custom meta type
+  return metacls(typename, (SimpleDictType,), {})
 
 simpledict.KeyToAttrError = KeyToAttrError
 simpledict.KeyToAttrToKeyMismatch = KeyToAttrToKeyMismatch
