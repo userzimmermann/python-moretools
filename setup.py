@@ -5,9 +5,8 @@ setup(
   version = '0.1a8',
   description = (
     'many more basic tools for python 2/3'
-    + ' extending itertools, functools operator and collections'
+    ' extending itertools, functools operator and collections'
     ),
-
   author = 'Stefan Zimmermann',
   author_email = 'zimmermann.code@gmail.com',
   url = 'http://bitbucket.org/StefanZimmermann/python-moretools',
@@ -27,7 +26,6 @@ setup(
     'Topic :: Software Development',
     'Topic :: Utilities',
     ],
-
   keywords = [
     'tools', 'itertools', 'functools', 'operator', 'collections',
     'iterator', 'iteration', 'functional',
