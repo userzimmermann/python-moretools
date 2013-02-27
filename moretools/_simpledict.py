@@ -169,6 +169,22 @@ class SimpleDictType(object):
   def __repr__(self):
     return 'simpledict(%s)' % repr(self.__dict__)
 
+class SimpleFrozenDictType(SimpleDictType):
+  """The :class:`SimpleDictType`
+  without support for setting values after instantiation.
+  * Custom frozen simpledict types are generated
+  together with the normal custom simpledict types in :func:`simpledict`,
+  stored as CustomType.frozen.
+  """
+  def __setattr__(self, name, value):
+    if name.startswith('__'): # is real (internal) attribute?
+      object.__setattr__(self, name, value)
+    else:
+      raise NotImplementedError
+
+  def __setitem__(self, name, value):
+    raise NotImplementedError
+
 def simpledict(
   typename, dicttype = dict,
   key_to_attr = lambda key: key, attr_to_key = lambda name: name
@@ -189,7 +205,9 @@ def simpledict(
     attr_to_key = staticmethod(attr_to_key),
     )
   metacls = type(typename + 'Meta', (SimpleDictMeta,), metaclsattrs)
-  # then create the actual simpledict type from the custom meta type
+  # then create a frozen simpledict type from the custom meta type
+  metacls.frozen = metacls(typename, (SimpleFrozenDictType,), {})
+  # finally create the normal simpledict type from the custom meta type
   return metacls(typename, (SimpleDictType,), {})
 
 simpledict.KeyToAttrError = KeyToAttrError
