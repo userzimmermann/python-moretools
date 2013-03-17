@@ -37,3 +37,5 @@ from ._collections import *
 from ._simpledict import *
 from ._multi import *
 from ._string import *
+from ._multidict import *
+from ._multisimpledict import *
