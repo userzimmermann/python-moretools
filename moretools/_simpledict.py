@@ -169,25 +169,31 @@ class SimpleDictType(object):
   def __repr__(self):
     return 'simpledict(%s)' % repr(self.__dict__)
 
-class SimpleFrozenDictType(SimpleDictType):
+class SimpleFrozenDictType(object):
   """The :class:`SimpleDictType`
   without support for setting values after instantiation.
   * Custom frozen simpledict types are generated
   together with the normal custom simpledict types in :func:`simpledict`,
   stored as CustomType.frozen.
   """
-  def __setattr__(self, name, value):
-    if name.startswith('__'): # is real (internal) attribute?
-      object.__setattr__(self, name, value)
-    else:
-      raise NotImplementedError
+  @classmethod
+  def type(cls, simpledicttype = SimpleDictType):
+    class SimpleFrozenDictType(cls, simpledicttype):
+      def __setattr__(self, name, value):
+        if name.startswith('__'): # is real (internal) attribute?
+          object.__setattr__(self, name, value)
+        else:
+          raise NotImplementedError
 
-  def __setitem__(self, name, value):
-    raise NotImplementedError
+      def __setitem__(self, name, value):
+        raise NotImplementedError
+
+    return SimpleFrozenDictType
 
 def simpledict(
   typename, dicttype = dict,
-  key_to_attr = lambda key: key, attr_to_key = lambda name: name
+  key_to_attr = lambda key: key, attr_to_key = lambda name: name,
+  simpledicttype = SimpleDictType
   ):
   """Create a custom :class:`SimpleDictType`-derived type.
 
@@ -197,6 +203,10 @@ def simpledict(
   :param attr_to_key: The *function*
   used for items' *attrname*-->*key* conversions.
   """
+  if not issubclass(simpledicttype, SimpleDictType):
+    raise TypeError(
+      "Custom `simpledicttype` must be derived from %s." % repr(
+        SimpleDictType))
   # first create a custom :class:`SimpleDictMeta`-derived meta type
   # holding the custom options
   metaclsattrs = dict(
@@ -206,9 +216,10 @@ def simpledict(
     )
   metacls = type(typename + 'Meta', (SimpleDictMeta,), metaclsattrs)
   # then create a frozen simpledict type from the custom meta type
-  metacls.frozen = metacls(typename, (SimpleFrozenDictType,), {})
+  simplefrozendicttype = SimpleFrozenDictType.type(simpledicttype)
+  metacls.frozen = metacls(typename, (simplefrozendicttype,), {})
   # finally create the normal simpledict type from the custom meta type
-  return metacls(typename, (SimpleDictType,), {})
+  return metacls(typename, (simpledicttype,), {})
 
 simpledict.KeyToAttrError = KeyToAttrError
 simpledict.KeyToAttrToKeyMismatch = KeyToAttrToKeyMismatch
