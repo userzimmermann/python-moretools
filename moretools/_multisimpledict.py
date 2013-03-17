@@ -89,14 +89,18 @@ class SimpleDictSetType(MultiSimpleDictType):
 def simpledictset(
   typename,
   multiple_key_handler = None, multiple_attr_handler = None,
-  simpledictsettype = SimpleDictSetType
+  basetype = SimpleDictSetType
   ):
+  if not issubclass(basetype, SimpleDictSetType):
+    raise TypeError(
+      "Custom `basetype` must be derived from %s." % repr(
+        SimpleDictSetType))
   metaclsattrs = dict(
     multiple_key_handler = staticmethod(multiple_key_handler),
     multiple_attr_handler = staticmethod(multiple_attr_handler),
     )
-  metacls = type('Meta', (type(simpledictsettype),), metaclsattrs)
-  return metacls(typename, (simpledictsettype,), {})
+  metacls = type(typename + 'Meta', (type(basetype),), metaclsattrs)
+  return metacls(typename, (basetype,), {})
 
 class SimpleDictZipType(MultiSimpleDictType):
   def __getitem__(self, key):
@@ -117,10 +121,14 @@ class SimpleDictZipType(MultiSimpleDictType):
 
 def simpledictzip(
   typename, default_value = _NoValue,
-  simpledictziptype = SimpleDictZipType
+  basetype = SimpleDictZipType
   ):
+  if not issubclass(basetype, SimpleDictZipType):
+    raise TypeError(
+      "Custom `basetype` must be derived from %s." % repr(
+        SimpleDictZipType))
   metaclsattrs = dict(
     default_value = default_value,
     )
-  metacls = type('Meta', (type(simpledictziptype),), metaclsattrs)
-  return metacls(typename, (simpledictsetzip,), {})
+  metacls = type(typename + 'Meta', (type(basetype),), metaclsattrs)
+  return metacls(typename, (basetype,), {})

@@ -193,7 +193,7 @@ class SimpleFrozenDictType(object):
 def simpledict(
   typename, dicttype = dict,
   key_to_attr = lambda key: key, attr_to_key = lambda name: name,
-  simpledicttype = SimpleDictType
+  basetype = SimpleDictType
   ):
   """Create a custom :class:`SimpleDictType`-derived type.
 
@@ -203,9 +203,9 @@ def simpledict(
   :param attr_to_key: The *function*
   used for items' *attrname*-->*key* conversions.
   """
-  if not issubclass(simpledicttype, SimpleDictType):
+  if not issubclass(basetype, SimpleDictType):
     raise TypeError(
-      "Custom `simpledicttype` must be derived from %s." % repr(
+      "Custom `basetype` must be derived from %s." % repr(
         SimpleDictType))
   # first create a custom :class:`SimpleDictMeta`-derived meta type
   # holding the custom options
@@ -216,10 +216,10 @@ def simpledict(
     )
   metacls = type(typename + 'Meta', (SimpleDictMeta,), metaclsattrs)
   # then create a frozen simpledict type from the custom meta type
-  simplefrozendicttype = SimpleFrozenDictType.type(simpledicttype)
-  metacls.frozen = metacls(typename, (simplefrozendicttype,), {})
+  frozenbasetype = SimpleFrozenDictType.type(basetype)
+  metacls.frozen = metacls(typename, (frozenbasetype,), {})
   # finally create the normal simpledict type from the custom meta type
-  return metacls(typename, (simpledicttype,), {})
+  return metacls(typename, (basetype,), {})
 
 simpledict.KeyToAttrError = KeyToAttrError
 simpledict.KeyToAttrToKeyMismatch = KeyToAttrToKeyMismatch
