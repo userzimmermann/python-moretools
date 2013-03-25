@@ -139,11 +139,13 @@ class SimpleDictType(object):
     del self.__dict__[key]
 
   def __dir__(self):
-    cls = type(self)
+    cls = type(self) # holds the helper methods and custom options
     return [cls.key_to_attr(key) for key in self.__dict__.keys()]
 
   def __iter__(self):
-    return iter(self.__dict__.items())
+    cls = type(self) # holds the helper methods and custom options
+    iter_func = getattr(self.__dict__, cls.iterate)
+    return iter(iter_func())
 
   def __len__(self):
     return len(self.__dict__)
@@ -191,7 +193,7 @@ class SimpleFrozenDictType(object):
     return SimpleFrozenDictType
 
 def simpledict(
-  typename, dicttype = dict,
+  typename, dicttype = dict, iterate = 'items',
   key_to_attr = lambda key: key, attr_to_key = lambda name: name,
   basetype = SimpleDictType
   ):
@@ -211,6 +213,7 @@ def simpledict(
   # holding the custom options
   metaclsattrs = dict(
     dicttype = dicttype,
+    iterate = iterate,
     key_to_attr = staticmethod(key_to_attr),
     attr_to_key = staticmethod(attr_to_key),
     )
