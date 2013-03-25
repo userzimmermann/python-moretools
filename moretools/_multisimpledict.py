@@ -35,18 +35,32 @@ from ._common import *
 from ._multidict import *
 from ._multidict import _NoValue, _MultiDictBase
 
+class _MultiSimpleDictMeta(type):
+  def __init__(cls, clsname, bases, clsattrs):
+    if not hasattr(cls, 'iterate'):
+      return
+    iter_func = getattr(cls, '_iter_' + cls.iterate)
+    cls.__iter__ = lambda self: iter_func(self)
+
+  def _iter_keys(cls, self):
+    return iter(set(chain(*(d.__dict__.keys() for d in self.__dicts__))))
+
+  def _iter_items(cls, self):
+    for key in cls._iter_keys(self):
+      yield key, self[key]
+
+  def _iter_values(cls, self):
+    for key in cls._iter_keys(self):
+      yield self[key]
+
 class MultiSimpleDictType(_MultiDictBase):
   def __getattr__(self, name):
     raise NotImplementedError
 
-  def __iter__(self):
-    for key in set(chain(*(d.__dict__.keys() for d in self.__dicts__))):
-      yield key, self[key]
-
   def __dir__(self):
     return list(set(chain(*(dir(d) for d in self.__dicts__))))
 
-class _SimpleDictSetMeta(type):
+class _SimpleDictSetMeta(_MultiSimpleDictMeta):
   class MultipleKey(LookupError):
     pass
 
@@ -87,7 +101,7 @@ class SimpleDictSetType(MultiSimpleDictType):
     return values[0]
 
 def simpledictset(
-  typename,
+  typename, iterate = 'items',
   multiple_key_handler = None, multiple_attr_handler = None,
   basetype = SimpleDictSetType
   ):
@@ -96,6 +110,7 @@ def simpledictset(
       "Custom `basetype` must be derived from %s." % repr(
         SimpleDictSetType))
   metaclsattrs = dict(
+    iterate = iterate,
     multiple_key_handler = staticmethod(multiple_key_handler),
     multiple_attr_handler = staticmethod(multiple_attr_handler),
     )
@@ -120,7 +135,7 @@ class SimpleDictZipType(MultiSimpleDictType):
     return valuetuple
 
 def simpledictzip(
-  typename, default_value = _NoValue,
+  typename, iterate = 'items', default_value = _NoValue,
   basetype = SimpleDictZipType
   ):
   if not issubclass(basetype, SimpleDictZipType):
@@ -128,6 +143,7 @@ def simpledictzip(
       "Custom `basetype` must be derived from %s." % repr(
         SimpleDictZipType))
   metaclsattrs = dict(
+    iterate = iterate,
     default_value = default_value,
     )
   metacls = type(typename + 'Meta', (type(basetype),), metaclsattrs)
