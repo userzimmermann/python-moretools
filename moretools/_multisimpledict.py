@@ -60,6 +60,9 @@ class MultiSimpleDictType(_MultiDictBase):
   def __dir__(self):
     return list(set(chain(*(dir(d) for d in self.__dicts__))))
 
+  def __contains__(self, item):
+    return item in iter(self)
+
 class _SimpleDictSetMeta(_MultiSimpleDictMeta):
   class MultipleKey(LookupError):
     pass

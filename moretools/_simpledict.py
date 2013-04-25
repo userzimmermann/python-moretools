@@ -147,6 +147,9 @@ class SimpleDictType(object):
     iter_func = getattr(self.__dict__, cls.iterate)
     return iter(iter_func())
 
+  def __contains__(self, item):
+    return item in iter(self)
+
   def __len__(self):
     return len(self.__dict__)
 

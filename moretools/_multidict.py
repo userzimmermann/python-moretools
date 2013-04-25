@@ -60,6 +60,9 @@ class MultiDictType(_MultiDictBase):
   def __iter__(self):
     return self.keys()
 
+  def __contains__(self, key):
+    return key in self.keys()
+
 class _DictSetMeta(type):
   class MultipleKey(LookupError):
     pass
