@@ -24,22 +24,52 @@ Several string manipulation/converter functions.
 
 .. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
-__all__ = 'camelize', 'decamelize',
+__all__ = ['camelize', 'decamelize', 'isidentifier']
 
 import re as _re
 
 from ._common import *
 
-def camelize(string):
-  """Convert a *lower_case* string (with underscores) to a *CamelCase* string.
-  """
-  return _re.sub(
-    '_([a-z]?)', lambda match: match.group(1).upper(),
-    string.capitalize())
 
-def decamelize(string):
-  """Convert a *CamelCase* string to a *lower_case* string (with underscores).
-  """
-  return _re.sub(
-    '[A-Z]', lambda match: '_' + match.group().lower(),
-    string[0].lower() + string[1:])
+def camelize(string, sep='', joiner=''):
+    """Convert a *lower_case* `string` to a *CamelCase* string.
+
+    - Capitalizes after any non-alphanumerical or explicit `sep` string.
+    - Also capitalizes after numbers.
+    """
+    return _re.sub(
+      r'(%s|([0-9]+))([a-z]?)' % (sep or r'[^A-Za-z0-9]'),
+      lambda match: (
+        joiner
+        + (match.group(2) or '') # numbers
+        + (match.group(3) or '').upper()
+        ),
+      string.capitalize())
+
+
+def decamelize(string, joiner='_'):
+    """Convert a *CamelCase* `string` to a *lower_case* string.
+
+    - The underscores can be changed to a custom `joiner` string.
+    """
+    def replace(match):
+        prefix = ( # Don't prepend the joiner to the beginning of string
+          '' if match.group(2) else joiner
+          )
+        caps = match.group(1).lower()
+        follower = match.group(3)
+        if not follower:
+            return prefix + caps
+        if len(caps) == 1:
+            return prefix + caps + follower
+        return prefix + caps[:-1] + joiner + caps[-1] + follower
+
+    return _re.sub('((^[A-Z]+)|[A-Z]+)([a-z])?', replace, string)
+
+
+_re_identifier = _re.compile('^[A-Za-z_][A-Za-z0-9_]*$')
+
+def isidentifier(string):
+    """Test if a `string` is a valid Python identifier.
+    """
+    return bool(_re_identifier.match(string))
