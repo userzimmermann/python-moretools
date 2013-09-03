@@ -198,7 +198,8 @@ class SimpleFrozenDictType(object):
 def simpledict(
   typename, dicttype = dict, iterate = 'items',
   key_to_attr = lambda key: key, attr_to_key = lambda name: name,
-  basetype = SimpleDictType
+  basetype = SimpleDictType,
+  extra = {},
   ):
   """Create a custom :class:`SimpleDictType`-derived type.
 
@@ -215,6 +216,7 @@ def simpledict(
   # first create a custom :class:`SimpleDictMeta`-derived meta type
   # holding the custom options
   metaclsattrs = dict(
+    extra,
     dicttype = dicttype,
     iterate = iterate,
     key_to_attr = staticmethod(key_to_attr),
