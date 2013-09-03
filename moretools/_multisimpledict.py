@@ -79,8 +79,16 @@ class SimpleDictSetType(MultiSimpleDictType):
 
   def __getitem__(self, key):
     cls = type(self) # holds the helper methods and custom options
-    ivalues = (d.__dict__.get(key, _NoValue) for d in self.__dicts__)
-    values = [v for v in ivalues if v is not _NoValue]
+    ## ivalues = (d.__dict__.get(key, _NoValue) for d in self.__dicts__)
+
+    def values():
+      for d in self.__dicts__:
+        try:
+          yield d[key]
+        except KeyError:
+          yield _NoValue
+
+    values = [v for v in values() if v is not _NoValue]
     if not values:
       raise KeyError(key)
     if len(values) > 1:
@@ -106,13 +114,15 @@ class SimpleDictSetType(MultiSimpleDictType):
 def simpledictset(
   typename, iterate = 'items',
   multiple_key_handler = None, multiple_attr_handler = None,
-  basetype = SimpleDictSetType
+  basetype = SimpleDictSetType,
+  extra = {},
   ):
   if not issubclass(basetype, SimpleDictSetType):
     raise TypeError(
       "Custom `basetype` must be derived from %s." % repr(
         SimpleDictSetType))
   metaclsattrs = dict(
+    extra,
     iterate = iterate,
     multiple_key_handler = staticmethod(multiple_key_handler),
     multiple_attr_handler = staticmethod(multiple_attr_handler),
