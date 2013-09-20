@@ -4,8 +4,8 @@ setup(
   name = 'python-moretools',
   version = '0.1a25',
   description = (
-    'many more basic tools for python 2/3'
-    ' extending itertools, functools operator and collections'
+    'Many more basic tools for python 2/3'
+    ' extending itertools, functools, operator and collections.'
     ),
   author = 'Stefan Zimmermann',
   author_email = 'zimmermann.code@gmail.com',
@@ -31,6 +31,7 @@ setup(
     'iterator', 'iteration', 'functional',
     'filter', 'map', 'repeat', 'query',
     'tuple', 'list', 'set', 'dict', 'simpledict',
+    'camelize', 'decamelize',
     'python3',
     ],
   )
