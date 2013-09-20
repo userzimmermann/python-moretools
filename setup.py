@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-  name = 'python-moretools',
+  name = 'moretools',
   version = '0.1a25',
   description = (
     'Many more basic tools for python 2/3'
