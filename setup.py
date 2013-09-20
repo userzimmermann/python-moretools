@@ -9,7 +9,7 @@ setup(
     ),
   author = 'Stefan Zimmermann',
   author_email = 'zimmermann.code@gmail.com',
-  url = 'http://bitbucket.org/StefanZimmermann/python-moretools',
+  url = 'http://bitbucket.org/userzimmermann/python-moretools',
 
   license = 'LGPLv3',
 
