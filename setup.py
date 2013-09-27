@@ -27,7 +27,7 @@ setup(
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
     'License :: OSI Approved ::'
-    + ' GNU Library or Lesser General Public License (LGPL)',
+    ' GNU Library or Lesser General Public License (LGPL)',
     'Operating System :: OS Independent',
     'Programming Language :: Python :: 2',
     'Programming Language :: Python :: 3',
