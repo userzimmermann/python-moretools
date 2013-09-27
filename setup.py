@@ -1,21 +1,29 @@
 from setuptools import setup
 
 setup(
-  name = 'moretools',
-  version = '0.1a25',
-  description = (
+  name='moretools',
+  version='0.1a25',
+  description=(
     'Many more basic tools for python 2/3'
     ' extending itertools, functools, operator and collections.'
     ),
-  author = 'Stefan Zimmermann',
-  author_email = 'zimmermann.code@gmail.com',
-  url = 'http://bitbucket.org/userzimmermann/python-moretools',
+  author='Stefan Zimmermann',
+  author_email='zimmermann.code@gmail.com',
+  url='http://bitbucket.org/userzimmermann/python-moretools',
 
-  license = 'LGPLv3',
+  license='LGPLv3',
 
-  packages = ['moretools'],
+  packages=['moretools'],
 
-  classifiers = [
+  use_2to3=True,
+  use_2to3_exclude_fixers=['lib2to3.fixes.fix_' + fix for fix in [
+    'dict',
+    'map',
+    'filter',
+    'reduce',
+    ]],
+
+  classifiers=[
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
     'License :: OSI Approved ::'
@@ -26,7 +34,7 @@ setup(
     'Topic :: Software Development',
     'Topic :: Utilities',
     ],
-  keywords = [
+  keywords=[
     'tools', 'itertools', 'functools', 'operator', 'collections',
     'iterator', 'iteration', 'functional',
     'filter', 'map', 'repeat', 'query',
