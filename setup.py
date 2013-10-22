@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
   name='moretools',
-  version='0.1a26',
+  version='0.1a27',
   description=(
     'Many more basic tools for python 2/3'
     ' extending itertools, functools, operator and collections.'
