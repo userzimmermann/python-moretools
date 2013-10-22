@@ -111,6 +111,12 @@ class SimpleDictSetType(MultiSimpleDictType):
         raise cls.MultipleAttribute(name)
     return values[0]
 
+  def __add__(self, other):
+    cls = type(self)
+    if cls is not type(other):
+      raise TypeError
+    return cls(self.__dicts__ + other.__dicts__)
+
 def simpledictset(
   typename, iterate = 'items',
   multiple_key_handler = None, multiple_attr_handler = None,
