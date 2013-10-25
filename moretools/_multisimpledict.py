@@ -98,6 +98,15 @@ class SimpleDictSetType(MultiSimpleDictType):
         raise cls.MultipleKey(key)
     return values[0]
 
+  def __setitem__(self, key, value):
+    cls = type(self)
+    dicts = [d for d in self.__dicts__ if key in d.__dict__]
+    if not dicts:
+      raise KeyError(key)
+    if len(dicts) > 1:
+      raise cls.MultipleKey(key)
+    dicts[0][key] = value
+
   def __getattr__(self, name):
     cls = type(self) # holds the helper methods and custom options
     ivalues = (getattr(d, name, _NoValue) for d in self.__dicts__)
@@ -110,6 +119,18 @@ class SimpleDictSetType(MultiSimpleDictType):
       else:
         raise cls.MultipleAttribute(name)
     return values[0]
+
+  def __setattr__(self, name, value):
+    cls = type(self)
+    if name.startswith('__'):
+        object.__setattr__(self, name, value)
+        return
+    dicts = [d for d in self.__dicts__ if name in dir(d)]
+    if not dicts:
+      raise AttributeError(name)
+    if len(dicts) > 1:
+      raise cls.MultipleAttribute(name)
+    setattr(dicts[0], name, value)
 
   def __add__(self, other):
     cls = type(self)
