@@ -36,24 +36,23 @@ from ._multidict import *
 from ._multidict import _NoValue, _MultiDictBase
 
 class _MultiSimpleDictMeta(type):
-  def __init__(cls, clsname, bases, clsattrs):
-    if not hasattr(cls, 'iterate'):
-      return
-    iter_func = getattr(cls, '_iter_' + cls.iterate)
-    cls.__iter__ = lambda self: iter_func(self)
-
-  def _iter_keys(cls, self):
+  def keys(cls, self):
     return iter(set(chain(*(d.__dict__.keys() for d in self.__dicts__))))
 
-  def _iter_items(cls, self):
-    for key in cls._iter_keys(self):
+  def items(cls, self):
+    for key in cls.keys(self):
       yield key, self[key]
 
-  def _iter_values(cls, self):
-    for key in cls._iter_keys(self):
+  def values(cls, self):
+    for key in cls.keys(self):
       yield self[key]
 
 class MultiSimpleDictType(_MultiDictBase):
+  def __iter__(self):
+    cls = type(self) # holds the helper methods and custom options
+    iter_func = getattr(cls, cls.iterate)
+    return iter(iter_func(self))
+
   def __getattr__(self, name):
     raise NotImplementedError
 
