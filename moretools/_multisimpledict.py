@@ -40,18 +40,18 @@ class _MultiSimpleDictMeta(type):
     return iter(set(chain(*(d.__dict__.keys() for d in self.__dicts__))))
 
   def items(cls, self):
-    for key in cls.keys(self):
+    for key in type(cls).keys(cls, self):
       yield key, self[key]
 
   def values(cls, self):
-    for key in cls.keys(self):
+    for key in type(cls).keys(cls, self):
       yield self[key]
 
 class MultiSimpleDictType(_MultiDictBase):
   def __iter__(self):
     cls = type(self) # holds the helper methods and custom options
-    iter_func = getattr(cls, cls.iterate)
-    return iter(iter_func(self))
+    iter_func = getattr(type(cls), cls.iterate)
+    return iter(iter_func(cls, self))
 
   def __getattr__(self, name):
     raise NotImplementedError
