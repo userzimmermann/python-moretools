@@ -27,7 +27,9 @@ and *exception* types for invalid *key*<-->*attrname* conversions.
 """
 from six import with_metaclass
 
-__all__ = ['SimpleDictType', 'simpledict']
+__all__ = [
+  'SimpleDictType', 'SimpleFrozenDictType', 'SimpleDictStructType',
+  'simpledict']
 
 import re as _re
 
@@ -112,7 +114,7 @@ class SimpleDictType(with_metaclass(SimpleDictMeta, object)):
     - `.__iter__()` returns an items (key/value pairs) iterator by default
       (can be overridden with `iterate` option).
     """
-    def __init__(self, mapping = (), **items):
+    def __init__(self, mapping=(), **items):
         """Instantiate the SimpleDictType with optional initial values.
         """
         cls = type(self) # holds the helper methods and custom options
@@ -198,25 +200,90 @@ class SimpleFrozenDictType(object):
       together with the normal custom simpledict types in :func:`simpledict`,
       stored as CustomType.frozen.
     """
+    def __setattr__(self, name, value):
+        if name.startswith('__'): # is real (internal) attribute?
+            object.__setattr__(self, name, value)
+        else:
+            raise NotImplementedError
+
+    def __setitem__(self, name, value):
+        raise NotImplementedError
+
     @classmethod
     def type(cls, simpledicttype=SimpleDictType):
         class SimpleFrozenDictType(cls, simpledicttype):
-            def __setattr__(self, name, value):
-                if name.startswith('__'): # is real (internal) attribute?
-                    object.__setattr__(self, name, value)
-                else:
-                    raise NotImplementedError
-
-            def __setitem__(self, name, value):
-                raise NotImplementedError
+            pass
 
         return SimpleFrozenDictType
+
+
+class SimpleDictStructType(object):
+    """Like :class:`SimpleDictType`,
+       but with support for dynamic item inheritance from other simpledicts,
+       which acts like member inheritance from base classes.
+
+    - Calling creates a new basic simpledict from all inherited items.
+    - Custom simpledict struct types are generated
+      together with the normal custom simpledict types in :func:`simpledict`,
+      stored as CustomType.struct.
+    """
+    __slots__ = ['__name__', '__bases__']
+
+    def __init__(self, name, bases, mapping=()):
+        type(self).basetype.__init__(self, mapping)
+        self.__name__ = name
+        self.__bases__ = tuple(bases)
+
+    def __getitem__(self, name):
+        cls = type(self)
+        try:
+            return cls.basetype.__getitem__(self, name)
+        except KeyError:
+            for base in self.__bases__:
+                try:
+                    return base[name]
+                except KeyError:
+                    pass
+        raise KeyError(name)
+
+    def __iter__(self):
+        cls = type(self)
+        try:
+            __dict__ = cls.dicttype(self.__bases__[-1])
+        except IndexError:
+            return cls.basetype.__iter__(self)
+        for base in self.__bases__[-2::-1]:
+            __dict__.update(base)
+        __dict__.update(cls.basetype.__iter__(self))
+        return iter(__dict__.items())
+
+    def __dir__(self):
+        cls = type(self)
+        names = set(cls.basetype.__dir__(self))
+        for base in self.__bases__:
+            names.update(dir(base))
+        return list(names)
+
+    def __call__(self):
+        #TODO
+        raise NotImplementedError
+
+    def __repr__(self):
+        return self.__name__
+
+    @classmethod
+    def type(cls, simpledicttype=SimpleDictType):
+        class SimpleDictStructType(cls, simpledicttype):
+            pass
+
+        return SimpleDictStructType
 
 
 def simpledict(
   typename, dicttype=dict, iterate='items',
   key_to_attr=lambda key: key, attr_to_key=lambda name: name,
-  basetype=SimpleDictType,
+  basetype=SimpleDictType, frozenbasetype=SimpleFrozenDictType,
+  basestructtype=SimpleDictStructType,
   extra={},
   ):
     """Create a custom :class:`SimpleDictType`-derived type.
@@ -235,15 +302,21 @@ def simpledict(
     # holding the custom options
     metaclassattrs = dict(
       extra,
+      basetype=basetype,
+      frozenbasetype=frozenbasetype,
+      basestructtype=basestructtype,
       dicttype=dicttype,
       iterate=iterate,
       key_to_attr=staticmethod(key_to_attr),
       attr_to_key=staticmethod(attr_to_key),
       )
     metaclass = type(typename + 'Meta', (SimpleDictMeta,), metaclassattrs)
-    # then create a frozen simpledict type from the custom meta type
-    frozenbasetype = SimpleFrozenDictType.type(basetype)
+    # then create a frozen simpledict type ...
+    frozenbasetype = frozenbasetype.type(basetype)
     metaclass.frozen = metaclass(typename, (frozenbasetype,), {})
+    # ... and a simpledict struct type from the custom meta type
+    basestructtype = basestructtype.type(basetype)
+    metaclass.struct = metaclass(typename, (basestructtype,), {})
     # finally create the normal simpledict type from the custom meta type
     return metaclass(typename, (basetype,), {})
 
