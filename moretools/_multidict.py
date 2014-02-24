@@ -24,80 +24,86 @@ Various container types with a combined interface to multiple `dict`s.
 
 .. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
-__all__ = 'MultiDictType', 'DictSet', 'DictZip',
+__all__ = ['MultiDictType', 'DictSet', 'DictZip']
+
+from six import with_metaclass
 
 from ._common import *
 
+
 class _NoValue:
-  pass
-
-class _MultiDictBase(object):
-  def __init__(self, dicts):
-    self.__dicts__ = list(dicts)
-
-  def __len__(self):
-    return len(set(chain(*(d.keys() for d in self.__dicts__))))
-
-  def __getitem__(self, key):
-    raise NotImplementedError
-
-  def __repr__(self):
-    return '%s(%s)' % (self.__class__.__name__, repr(self.__dicts__))
-
-class MultiDictType(_MultiDictBase):
-  def keys(self):
-    for key in set(chain(*(d.keys() for d in self.__dicts__))):
-      yield key
-
-  def values(self):
-    for key in self.keys():
-      yield self[key]
-
-  def items(self):
-    for key in self.keys():
-      yield key, self[key]
-
-  def __iter__(self):
-    return self.keys()
-
-  def __contains__(self, key):
-    return key in self.keys()
-
-class _DictSetMeta(type):
-  class MultipleKey(LookupError):
     pass
 
-  MultipleKey.__name__ = 'DictSet.MultipleKey'
 
-class DictSet(MultiDictType):
-  __metaclass__ = _DictSetMeta
+class _MultiDictBase(object):
+    def __init__(self, dicts):
+        self.__dicts__ = list(dicts)
 
-  def __getitem__(self, key):
-    ivalues = (d.get(key, _NoValue) for d in self.__dicts__)
-    values = [v for v in ivalues if v is not _NoValue]
-    if not values:
-      raise KeyError(key)
-    if len(values) > 1:
-      raise type(self).MultipleKey(key)
-    return values[0]
+    def __len__(self):
+        return len(set(chain(*(d.keys() for d in self.__dicts__))))
+
+    def __getitem__(self, key):
+        raise NotImplementedError
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, repr(self.__dicts__))
+
+
+class MultiDictType(_MultiDictBase):
+    def keys(self):
+        for key in set(chain(*(d.keys() for d in self.__dicts__))):
+            yield key
+
+    def values(self):
+        for key in self.keys():
+            yield self[key]
+
+    def items(self):
+        for key in self.keys():
+            yield key, self[key]
+
+    def __iter__(self):
+        return self.keys()
+
+    def __contains__(self, key):
+        return key in self.keys()
+
+
+class _DictSetMeta(type):
+    class MultipleKey(LookupError):
+        pass
+
+    MultipleKey.__name__ = 'DictSet.MultipleKey'
+
+
+class DictSet(with_metaclass(_DictSetMeta, MultiDictType)):
+    def __getitem__(self, key):
+        ivalues = (d.get(key, _NoValue) for d in self.__dicts__)
+        values = [v for v in ivalues if v is not _NoValue]
+        if not values:
+            raise KeyError(key)
+        if len(values) > 1:
+            raise type(self).MultipleKey(key)
+        return values[0]
+
 
 class DictZip(MultiDictType):
-  def __init__(self, dicts, default_value = _NoValue):
-    super(type(self), self).__init__(self, dicts)
+    def __init__(self, dicts, default_value = _NoValue):
+        super(type(self), self).__init__(self, dicts)
 
-    if default_value is not _NoValue:
-      self.default_value = default_value
+        if default_value is not _NoValue:
+            self.default_value = default_value
 
-  @property
-  def _default_value(self):
-    try:
-      return self.default_value
-    except AttributeError:
-      return _NoValue
+    @property
+    def _default_value(self):
+        try:
+            return self.default_value
+        except AttributeError:
+            return _NoValue
 
-  def __getitem__(self, key):
-    valuetuple = tuple(
-      d.get(key, self._default_value) for d in self.__dicts__)
-    if _NoValue in valuetuple:
-      raise KeyError(key)
-    return valuetuple
+    def __getitem__(self, key):
+        valuetuple = tuple(
+          d.get(key, self._default_value) for d in self.__dicts__)
+        if _NoValue in valuetuple:
+            raise KeyError(key)
+        return valuetuple
