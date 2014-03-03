@@ -31,6 +31,7 @@ __all__ = [
   'SimpleDictType', 'SimpleFrozenDictType', 'SimpleDictStructType',
   'simpledict']
 
+from warnings import warn
 import re as _re
 
 from ._common import *
@@ -230,14 +231,14 @@ class SimpleDictStructType(object):
     __slots__ = ['__name__', '__bases__']
 
     def __init__(self, name, bases, mapping=()):
-        type(self).basetype.__init__(self, mapping)
+        type(self).base.__init__(self, mapping)
         self.__name__ = name
         self.__bases__ = tuple(bases)
 
     def __getitem__(self, name):
         cls = type(self)
         try:
-            return cls.basetype.__getitem__(self, name)
+            return cls.base.__getitem__(self, name)
         except KeyError:
             for base in self.__bases__:
                 try:
@@ -251,15 +252,15 @@ class SimpleDictStructType(object):
         try:
             __dict__ = cls.dicttype(self.__bases__[-1])
         except IndexError:
-            return cls.basetype.__iter__(self)
+            return cls.base.__iter__(self)
         for base in self.__bases__[-2::-1]:
             __dict__.update(base)
-        __dict__.update(cls.basetype.__iter__(self))
+        __dict__.update(cls.base.__iter__(self))
         return iter(__dict__.items())
 
     def __dir__(self):
         cls = type(self)
-        names = set(cls.basetype.__dir__(self))
+        names = set(cls.base.__dir__(self))
         for base in self.__bases__:
             names.update(dir(base))
         return list(names)
@@ -282,9 +283,11 @@ class SimpleDictStructType(object):
 def simpledict(
   typename, dicttype=dict, iterate='items',
   key_to_attr=lambda key: key, attr_to_key=lambda name: name,
-  basetype=SimpleDictType, frozenbasetype=SimpleFrozenDictType,
-  basestructtype=SimpleDictStructType,
+  base=SimpleDictType, frozenbase=SimpleFrozenDictType,
+  structbase=SimpleDictStructType,
   extra={},
+  #DEPRECATED:
+  basetype=None, frozenbasetype=None, basestructtype=None,
   ):
     """Create a custom :class:`SimpleDictType`-derived type.
 
@@ -294,31 +297,48 @@ def simpledict(
     :param attr_to_key: The *function*
       used for items' *attrname*-->*key* conversions.
     """
-    if not issubclass(basetype, SimpleDictType):
+    if basetype:
+        warn("Use base= instead of basetype=.", DeprecationWarning)
+        base = basetype
+    if not issubclass(base, SimpleDictType):
         raise TypeError(
-          "Custom `basetype` must be derived from %s." % repr(
+          "Custom `base` must be derived from %s." % repr(
             SimpleDictType))
     # first create a custom :class:`SimpleDictMeta`-derived meta type
     # holding the custom options
     metaclassattrs = dict(
       extra,
-      basetype=basetype,
-      frozenbasetype=frozenbasetype,
-      basestructtype=basestructtype,
+      base=base,
+      frozenbase=frozenbase,
+      structbase=structbase,
       dicttype=dicttype,
       iterate=iterate,
       key_to_attr=staticmethod(key_to_attr),
       attr_to_key=staticmethod(attr_to_key),
+      #DEPRECATED:
+      basetype=base,
+      frozenbasetype=frozenbase,
+      basestructtype=structbase,
       )
     metaclass = type(typename + 'Meta', (SimpleDictMeta,), metaclassattrs)
     # then create a frozen simpledict type ...
-    frozenbasetype = frozenbasetype.type(basetype)
-    metaclass.frozen = metaclass(typename, (frozenbasetype,), {})
+    if frozenbasetype:
+        warn("Use frozenbase= instead of frozenbasetype=.",
+             DeprecationWarning)
+        frozenbase = frozenbasetype
+    if frozenbase:
+        frozenbase = frozenbase.type(base)
+        metaclass.frozen = metaclass(typename, (frozenbase,), {})
     # ... and a simpledict struct type from the custom meta type
-    basestructtype = basestructtype.type(basetype)
-    metaclass.struct = metaclass(typename, (basestructtype,), {})
+    if basestructtype:
+        warn("Use structbase= instead of basestructtype=.",
+             DeprecationWarning)
+        structbase = basestructtype
+    if structbase:
+        structbase = structbase.type(base)
+        metaclass.struct = metaclass(typename, (structbase,), {})
     # finally create the normal simpledict type from the custom meta type
-    return metaclass(typename, (basetype,), {})
+    return metaclass(typename, (base,), {})
 
 
 simpledict.KeyToAttrError = KeyToAttrError
