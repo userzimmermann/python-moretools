@@ -40,8 +40,9 @@ setup(
     'tools', 'itertools', 'functools', 'operator', 'collections',
     'iterator', 'iteration', 'functional',
     'filter', 'map', 'repeat', 'query',
-    'tuple', 'list', 'set', 'dict', 'simpledict',
-    'camelize', 'decamelize',
+    'tuple', 'list', 'set', 'dict', 'simpledict', 'frozen', 'struct',
+    'dictset', 'dictzip', 'simpledictset', 'simpledictzip',
+    'camelize', 'decamelize', 'isidentifier', 'identifier',
     'python3',
     ],
   )
