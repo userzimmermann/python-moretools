@@ -29,8 +29,8 @@ def madd(*values):
 
 def meq(*values):
   i = iter(values)
-  return all(_map(lambda value, first = i.next(): value == first, i))
+  return all(_map(lambda value, first = next(i): value == first, i))
 
 def mis(*values):
   i = iter(values)
-  return all(_map(lambda value, first = i.next(): value is first, i))
+  return all(_map(lambda value, first = next(i): value is first, i))
