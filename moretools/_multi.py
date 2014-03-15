@@ -24,13 +24,16 @@
 from ._common import *
 from ._common import _map
 
+
 def madd(*values):
-  return reduce(add, values)
+    return reduce(add, values)
+
 
 def meq(*values):
-  i = iter(values)
-  return all(_map(lambda value, first = next(i): value == first, i))
+    i = iter(values)
+    return all(_map(lambda value, _first=next(i): value == _first, i))
+
 
 def mis(*values):
-  i = iter(values)
-  return all(_map(lambda value, first = next(i): value is first, i))
+    i = iter(values)
+    return all(_map(lambda value, _first=next(i): value is _first, i))

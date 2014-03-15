@@ -25,26 +25,30 @@ returning an iterator in every case
 from ._common import *
 from ._common import _map
 
+
 def getattrs(obj, *attrs):
-  return _map(partial(getattr, obj), attrs)
+    return _map(partial(getattr, obj), attrs)
+
 
 class attrsgetter(object):
-  __slots__ = 'attrs',
+    __slots__ = ['attrs']
 
-  def __init__(*attrs):
-    self.attrs = attrs
+    def __init__(*attrs):
+        self.attrs = attrs
 
-  def __call__(obj):
-    return getattrs(obj, *self.attrs)
+    def __call__(obj):
+        return getattrs(obj, *self.attrs)
+
 
 def getitems(obj, *keys):
-  return _map(partial(getitem, obj), keys)
+    return _map(partial(getitem, obj), keys)
+
 
 class itemsgetter(object):
-  __slots__ = 'keys',
+    __slots__ = ['keys']
 
-  def __init__(*keys):
-    self.keys = keys
+    def __init__(*keys):
+        self.keys = keys
 
-  def __call__(self, obj):
-    return getitems(obj, *self.keys)
+    def __call__(self, obj):
+        return getitems(obj, *self.keys)

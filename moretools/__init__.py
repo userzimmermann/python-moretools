@@ -18,8 +18,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""many more basic tools for python 2/3
-extending itertools, functools and operator
+"""Many more basic tools for Python 2/3
+   extending itertools, functools and operator.
 """
 
 from ._map import *

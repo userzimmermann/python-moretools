@@ -18,24 +18,24 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""common imports of standard itertools, functools and operators
-and python 2/3 unifications
+"""Common imports of standard itertools, functools and operators
+   and Python 2/3 unifications.
 """
+from six import PY2
 
 from operator import *
 from itertools import *
 from functools import *
 from collections import *
 
-try: # always use the iterator variants of the following standard tools
-  #... for moretools (in python 2 and 3)
-  _map = imap
-  _filter = ifilter
-  _filterfalse = ifilterfalse
-  _zip = izip
 
-except NameError:
-  _map = map
-  _filter = filter
-  _filterfalse = filterfalse
-  _zip = zip
+if PY2: # always use the iterator variants of the following standard tools
+    _map = imap
+    _filter = ifilter
+    _filterfalse = ifilterfalse
+    _zip = izip
+else:
+    _map = map
+    _filter = filter
+    _filterfalse = filterfalse
+    _zip = zip

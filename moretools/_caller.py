@@ -18,22 +18,25 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""classes to store args and kwargs and call objects with them
+"""Classes to store args and kwargs and call objects with them.
 """
 
 from ._common import *
 
-class _caller(object):
-  __slots__ = 'args', 'kwargs',
 
-  def __init__(self, *args, **kwargs):
-    self.args = args
-    self.kwargs = kwargs
+class _caller(object):
+    __slots__ = ['args', 'kwargs']
+
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
 
 class caller(_caller):
-  def __call__(self, obj):
-    return obj(*self.args, **self.kwargs)
+    def __call__(self, obj):
+        return obj(*self.args, **self.kwargs)
+
 
 class partialcaller(_caller):
-  def __call__(self, obj):
-    return partial(obj, *self.args, **self.kwargs)
+    def __call__(self, obj):
+        return partial(obj, *self.args, **self.kwargs)

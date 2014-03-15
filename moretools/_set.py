@@ -23,48 +23,56 @@
 
 from ._common import *
 
+
 def setattrs(obj, **attrs_and_values):
-  for attr, value in keys_and_values.items(): setattr(obj, attr, value)
+    for attr, value in keys_and_values.items():
+        setattr(obj, attr, value)
+
 
 class attrsetter(object):
-  __slots__ = 'attr', 'value',
+    __slots__ = ['attr', 'value']
 
-  def __init__(self, attr, value):
-    self.attr = attr
-    self.value = value
+    def __init__(self, attr, value):
+        self.attr = attr
+        self.value = value
 
-  def __call__(self, obj):
-    setattr(obj, self.attr, self.value)
+    def __call__(self, obj):
+        setattr(obj, self.attr, self.value)
+
 
 class attrssetter(object):
-  __slots__ = 'attrs_and_values',
+    __slots__ = ['attrs_and_values']
 
-  def __init__(self, **attrs_and_values):
-    self.attrs_and_values = attrs_and_values
+    def __init__(self, **attrs_and_values):
+        self.attrs_and_values = attrs_and_values
 
-  def __call__(self, obj):
-    for attr, value in self.attrs_and_values.items():
-      setattr(obj, attr, value)
+    def __call__(self, obj):
+        for attr, value in self.attrs_and_values.items():
+            setattr(obj, attr, value)
+
 
 def setitems(obj, **keys_and_values):
-  for key, value in keys_and_values.items(): obj[key] = value
+    for key, value in keys_and_values.items():
+        obj[key] = value
+
 
 class itemsetter(object):
-  __slots__ = 'key', 'value',
+    __slots__ = ['key', 'value']
 
-  def __init__(self, key, value):
-    self.key = key
-    self.value = value
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
 
-  def __call__(self, obj):
-    obj[self.key] = self.value
+    def __call__(self, obj):
+        obj[self.key] = self.value
+
 
 class itemssetter(object):
-  __slots__ = 'keys_and_values',
+    __slots__ = ['keys_and_values']
 
-  def __init__(self, **keys_and_values):
-    self.keys_and_values = keys_and_values
+    def __init__(self, **keys_and_values):
+        self.keys_and_values = keys_and_values
 
-  def __call__(self, obj):
-    for key, value in self.keys_and_values.items():
-      obj[key] = value
+    def __call__(self, obj):
+        for key, value in self.keys_and_values.items():
+            obj[key] = value

@@ -18,31 +18,40 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""star versions of standard itertools (like starmap)
+"""Star versions of standard itertools (like starmap).
 """
 
 from ._common import *
 from ._common import _filter, _filterfalse
 
+
 def startakewhile(fun, seqs):
-  return takewhile(lambda seq: fun(*seq), seqs)
+    return takewhile(lambda seq: fun(*seq), seqs)
+
 
 def stardropwhile(fun, seqs):
-  return dropwhile(lambda seq: fun(*seq), seqs)
+    return dropwhile(lambda seq: fun(*seq), seqs)
+
 
 def starreduce(fun, seqs, initial):
-  return reduce(lambda result, seq: fun(result, *seq), seqs, initial)
+    return reduce(lambda result, seq: fun(result, *seq), seqs, initial)
+
 
 def starresultsreduce(fun, seq, initial):
-  return reduce(
-    lambda resultseq, item: fun(*chain(resultseq, (item,))), seq, initial)
+    return reduce(
+      lambda resultseq, item: fun(*chain(resultseq, (item,))),
+      seq, initial)
+
 
 def starresultsstarreduce(fun, seqs, initial):
-  return reduce(
-    lambda resultseq, seq: fun(*chain(resultseq, seq)), seq, initial)
+    return reduce(
+      lambda resultseq, seq: fun(*chain(resultseq, seq)),
+      seq, initial)
+
 
 def starfilter(fun, seq):
-  return _filter(lambda item: fun(*item), seq)
+    return _filter(lambda item: fun(*item), seq)
+
 
 def starfilterfalse(fun, seq):
-  return _filterfalse(lambda item: fun(*item), seq)
+    return _filterfalse(lambda item: fun(*item), seq)

@@ -23,42 +23,48 @@
 
 from ._common import *
 
+
 def hasattrs(obj, *attrs):
-  return map(partial(hasattr, obj), attrs)
+    return map(partial(hasattr, obj), attrs)
+
 
 class attrtester(object):
-  __slots__ = 'attr',
+    __slots__ = ['attr']
 
-  def __init__(self, attr):
-    self.attr = attr
+    def __init__(self, attr):
+        self.attr = attr
 
-  def __call__(self, obj):
-    return hasattr(obj, self.attr)
+    def __call__(self, obj):
+        return hasattr(obj, self.attr)
+
 
 class attrstester(object):
-  __slots__ = 'attrs',
+    __slots__ = ['attrs']
 
-  def __init__(self, *attrs):
-    self.attrs = attrs
+    def __init__(self, *attrs):
+        self.attrs = attrs
 
-  def __call__(self, obj):
-    return hasattrs(obj, *self.attrs)
+    def __call__(self, obj):
+        return hasattrs(obj, *self.attrs)
+
 
 class itemtester(object):
-  __slots__ = 'key', 'value',
+    __slots__ = ['key', 'value']
 
-  def __init__(self, key, value):
-    self.key = key
-    self.value = value
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
 
-  def __call__(self, obj):
-    return obj[key] == item
+    def __call__(self, obj):
+        return obj[key] == self.value
+
 
 class itemstester(object):
-  __slots__ = 'keys_and_values',
+    __slots__ = ['keys_and_values']
 
-  def __init__(self, **keys_and_values):
-    self.keys_and_values = keys_and_values
+    def __init__(self, **keys_and_values):
+        self.keys_and_values = keys_and_values
 
-  def __call__(self, obj):
-    for key, value in self.keys_and_values: yield obj[key] == value
+    def __call__(self, obj):
+        for key, value in self.keys_and_values:
+            yield obj[key] == value

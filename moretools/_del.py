@@ -18,43 +18,53 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""more functions/classes to delete attrs/items on objects
+"""More functions/classes to delete attrs/items on objects.
 """
 
 from ._common import *
 
-def delattrs(*attrs):
-  for attr in attrs: delattr(obj, attr)
+
+def delattrs(obj, *attrs):
+    for attr in attrs:
+        delattr(obj, attr)
+
 
 class attrdeleter(object):
-  __slots__ = 'attr',
+    __slots__ = ['attr']
 
-  def __init__(self, attr):
-    self.attr = attr
+    def __init__(self, attr):
+        self.attr = attr
 
-  def __call__(self, obj):
-    delattr(obj, self.attr)
+    def __call__(self, obj):
+        delattr(obj, self.attr)
 
-class attrdeleter(object):
-  __slots__ = 'attrs',
 
-  def __init__(self, *attrs):
-    self.attrs = attrs
+class attrsdeleter(object):
+    __slots__ = ['attrs']
 
-  def __call__(self, obj):
-    for attr in self.attrs: delattr(obj, attr)
+    def __init__(self, *attrs):
+        self.attrs = attrs
 
-def delitems(*keys):
-  for key in keys: del obj[key]
+    def __call__(self, obj):
+        for attr in self.attrs:
+            delattr(obj, attr)
+
+
+def delitems(obj, *keys):
+    for key in keys:
+        del obj[key]
+
 
 def itemdeleter(key):
-  def del_(obj):
-    del obj[key]
+    def del_(obj):
+        del obj[key]
 
-  return del_
+    return del_
+
 
 def itemsdeleter(*keys):
-  def del_(obj):
-    for key in keys: del obj[key]
+    def del_(obj):
+        for key in keys:
+            del obj[key]
 
-  return del_
+    return del_

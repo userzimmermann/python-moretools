@@ -18,36 +18,39 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""functions to create varius collections of collections
-from sequences containing only sequences
+"""Functions to create varius collections of collections
+   from sequences containing only sequences.
 """
 
 from ._common import *
 from ._common import _map
 
+
 def tupleoftuples(self, seqs):
-  return tuple(_map(tuple, seqs))
+    return tuple(_map(tuple, seqs))
 
 def tupleoflists(self, seqs):
-  return tuple(_map(list, seqs))
+    return tuple(_map(list, seqs))
 
 def tupleofsets(self, seqs):
-  return tuple(_map(set, seqs))
+    return tuple(_map(set, seqs))
 
 def tupleofdicts(self, seqs):
-  return list(_map(dict, seqs))
+    return list(_map(dict, seqs))
+
 
 def listoftuples(self, seqs):
-  return list(_map(tuple, seqs))
+    return list(_map(tuple, seqs))
 
 def listoflists(self, seqs):
-  return list(_map(list, seqs))
+    return list(_map(list, seqs))
 
 def listofsets(self, seqs):
-  return list(_map(set, seqs))
+    return list(_map(set, seqs))
 
 def listofdicts(self, seqs):
-  return list(_map(dict, seqs))
+    return list(_map(dict, seqs))
+
 
 def setoftuples(self, seqs):
-  return set(_map(tuple, seqs))
+    return set(_map(tuple, seqs))

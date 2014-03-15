@@ -23,14 +23,18 @@
 
 from ._common import *
 
-def empty(seq):
-  try:
-    next(iter(seq))
-    return False
 
-  except StopIteration: return True
+def empty(seq):
+    try:
+        next(iter(seq))
+        return False
+    except StopIteration:
+        return True
+
 
 def peekempty(seq):
-  i = iter(seq)
-  try: return False, chain((next(i),), i)
-  except StopIteration: return True, None
+    i = iter(seq)
+    try:
+        return False, chain((next(i),), i)
+    except StopIteration:
+        return True, None

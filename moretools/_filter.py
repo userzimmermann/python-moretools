@@ -24,20 +24,23 @@
 from ._common import *
 from ._common import _map, _filter
 
+
 def filterattrs(seq, *attrs, **attrs_and_values):
-  return _filter(
-    lambda seqitem: all(chain(
-      _map(partial(hasattr, seqitem), attrs),
-      starmap(lambda attr, value: getattr(seqitem, attr) == value,
-              attrs_and_values.items()))),
-    seq)
+    return _filter(
+      lambda seqitem: all(chain(
+        _map(partial(hasattr, seqitem), attrs),
+        starmap(lambda attr, value: getattr(seqitem, attr) == value,
+                attrs_and_values.items()))),
+      seq)
+
 
 def filteritems(seq, **keys_and_values):
-  return _filter(
-    lambda seqitem: all(chain(
-      _map(partial(hasitem, seqitem), keys),
-      starmap(lambda key, value: seqitem[key] == value,
-              keys_and_values.items()))),
-    seq)
+    return _filter(
+      lambda seqitem: all(chain(
+        _map(partial(hasitem, seqitem), keys),
+        starmap(lambda key, value: seqitem[key] == value,
+                keys_and_values.items()))),
+      seq)
+
 
 ## def filterkeys(, **keys_and_values):

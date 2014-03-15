@@ -25,29 +25,39 @@ with attr/item or call returning
 from ._common import *
 from ._common import _map
 
+
 def repeatcall(obj, times = -1):
-  while times:
-    if times > 0: times -= 1
-    yield obj()
+    while times:
+        if times > 0:
+            times -= 1
+        yield obj()
+
 
 def repeatattr(obj, attr, times = -1):
-  while times:
-    if times > 0: times -= 1
-    yield getattr(obj, attr)
+    while times:
+        if times > 0:
+            times -= 1
+        yield getattr(obj, attr)
+
 
 def repeatattrs(obj, *attrs, **kwargs):
-  times = kwargs.get('times', -1)
-  while times:
-    if times > 0: times -= 1
-    yield _map(partial(getattr, obj), attrs)
+    times = kwargs.get('times', -1)
+    while times:
+        if times > 0:
+            times -= 1
+        yield _map(partial(getattr, obj), attrs)
+
 
 def repeatitem(obj, key, times = -1):
-  while times:
-    if times > 0: times -= 1
-    yield obj[key]
+    while times:
+        if times > 0:
+            times -= 1
+        yield obj[key]
+
 
 def repeatitems(obj, *keys, **kwargs):
-  times = kwargs.get('times', -1)
-  while times:
-    if times > 0: times -= 1
-    yield _map(partial(getitem, obj), keys)
+    times = kwargs.get('times', -1)
+    while times:
+        if times > 0:
+            times -= 1
+        yield _map(partial(getitem, obj), keys)
