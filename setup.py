@@ -4,9 +4,14 @@ except ImportError:
     from distutils.core import setup
 
 
+VERSION = open('VERSION').read().strip()
+
+REQUIRES = open('requirements.txt').read()
+
+
 setup(
   name='moretools',
-  version='0.1a33',
+  version=VERSION,
   description=(
     'Many more basic tools for python 2/3'
     ' extending itertools, functools, operator and collections.'
@@ -17,7 +22,7 @@ setup(
 
   license='LGPLv3',
 
-  install_requires=['six'],
+  install_requires=REQUIRES,
 
   packages=['moretools'],
 
