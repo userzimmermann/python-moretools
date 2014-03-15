@@ -13,6 +13,8 @@ setup(
 
   license='LGPLv3',
 
+  install_requires=['six'],
+
   packages=['moretools'],
 
   classifiers=[
