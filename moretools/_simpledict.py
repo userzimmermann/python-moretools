@@ -341,6 +341,11 @@ def simpledict(
     return metaclass(typename, (base,), {})
 
 
+simpledict.base = SimpleDictType
+simpledict.frozenbase = SimpleFrozenDictType
+simpledict.structbase = SimpleDictStructType
+
+
 simpledict.KeyToAttrError = KeyToAttrError
 simpledict.KeyToAttrToKeyMismatch = KeyToAttrToKeyMismatch
 simpledict.AttrToKeyToAttrMismatch = AttrToKeyToAttrMismatch
