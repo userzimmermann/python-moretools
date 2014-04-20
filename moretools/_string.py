@@ -44,7 +44,7 @@ def camelize(string, sep='', joiner=''):
         + (match.group(2) or '') # numbers
         + (match.group(3) or '').upper()
         ),
-      string.capitalize())
+      string[0].upper() + string[1:]) #.capitalize())
 
 
 def decamelize(string, joiner='_'):
