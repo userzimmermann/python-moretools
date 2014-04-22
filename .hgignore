@@ -9,3 +9,10 @@ __pycache__/
 ^dist/
 \.egg-info
 ^\.tox/
+
+^\$tf/
+^BuildProcessTemplates/
+\.sln$
+\.suo$
+\.pyproj$
+\.vs.scc$
