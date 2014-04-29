@@ -37,6 +37,8 @@ def camelize(string, sep='', joiner=''):
     - Capitalizes after any non-alphanumerical or explicit `sep` string.
     - Also capitalizes after numbers.
     """
+    if not string:
+        return ''
     return _re.sub(
       r'(%s|([0-9]+))([a-z]?)' % (sep or r'[^A-Za-z0-9]'),
       lambda match: (
