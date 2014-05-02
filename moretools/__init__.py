@@ -41,3 +41,4 @@ from ._multidict import *
 from ._multisimpledict import *
 from ._lazy import *
 from ._cached import *
+from ._xmlrpc import *
