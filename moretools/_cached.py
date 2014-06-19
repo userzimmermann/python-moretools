@@ -18,9 +18,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""moretools._deco
+"""moretools._cached
 
-Several decorators.
+The @cached decorator.
 
 .. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
