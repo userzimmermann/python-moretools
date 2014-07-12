@@ -1,16 +1,17 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+import sys
+from subprocess import call
 
 
-VERSION = open('VERSION').read().strip()
+exec(open('__init__.py').read())
 
-REQUIRES = open('requirements.txt').read()
+if 'sdist' in sys.argv:
+    status = call('scons')
+    if status:
+        sys.exit(status)
 
 
 setup(
-  name='moretools',
+  name=PROJECT,
   version=VERSION,
   description=(
     'Many more basic tools for python 2/3'
@@ -24,7 +25,16 @@ setup(
 
   install_requires=REQUIRES,
 
-  packages=['moretools'],
+  package_dir={
+    'moretools.setup': '.',
+    },
+  packages=[
+    'moretools',
+    'moretools.setup',
+    ],
+  package_data={
+    'moretools.setup': SETUP_DATA,
+    },
 
   classifiers=[
     'Development Status :: 3 - Alpha',
