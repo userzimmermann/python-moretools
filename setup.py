@@ -11,7 +11,7 @@ if 'sdist' in sys.argv:
 
 
 setup(
-  name=PROJECT,
+  name=NAME,
   version=VERSION,
   description=(
     'Many more basic tools for python 2/3'
