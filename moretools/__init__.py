@@ -22,6 +22,14 @@
    extending itertools, functools and operator.
 """
 
+from . import setup
+
+__version__ = setup.VERSION
+
+__requires__ = setup.REQUIRES
+__requires__.check()
+
+
 from ._map import *
 from ._repeat import *
 from ._star import *
