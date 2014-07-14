@@ -22,12 +22,17 @@
    extending itertools, functools and operator.
 """
 
-from . import setup
+try: # Doesn't work on setup of jinjatools,
+     #  which is used in zetup and depends on moretools,
+     #  what leads to circular imports with incomplete modules.
+    from . import zetup
+except:
+    pass
+else:
+    __distribution__ = zetup.DISTRIBUTION.find(__path__[0])
+    __version__ = zetup.VERSION
 
-__version__ = setup.VERSION
-
-__requires__ = setup.REQUIRES
-__requires__.check()
+    __requires__ = zetup.REQUIRES.checked
 
 
 from ._map import *
