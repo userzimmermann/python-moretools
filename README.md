@@ -5,9 +5,7 @@ moretools
 # 0. Setup
 ----------
 
-Supported __Python__ versions: __2.7.x__, __3.3.x__ and later
-
-Package name: __moretools__
+Supported __Python__ versions: __2.7__, __3.3__, __3.4__
 
 ### Requirements
 
