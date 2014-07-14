@@ -1,5 +1,7 @@
 include COPYING*
 
+include zetup.cfg
+
 include VERSION
 include requirements.txt
 
