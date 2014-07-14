@@ -2,9 +2,11 @@ import sys
 from subprocess import call
 
 
+# Run the zetup script:
 exec(open('__init__.py').read())
 
 if 'sdist' in sys.argv:
+    # Build README.md:
     status = call('scons')
     if status:
         sys.exit(status)
@@ -12,13 +14,13 @@ if 'sdist' in sys.argv:
 
 zetup(
   package_dir={
-    'moretools.setup': '.',
+    'moretools.zetup': '.',
     },
   packages=[
     'moretools',
-    'moretools.setup',
+    'moretools.zetup',
     ],
   package_data={
-    'moretools.setup': SETUP_DATA,
+    'moretools.zetup': ZETUP_DATA,
     },
   )

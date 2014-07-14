@@ -209,7 +209,7 @@ if any(pyversion.startswith('3') for pyversion in PYTHON):
     KEYWORDS.append('python3')
 
 
-SETUP_DATA = ['zetup.cfg', 'VERSION', 'requirements.txt']
+ZETUP_DATA = ['zetup.cfg', 'VERSION', 'requirements.txt']
 
 VERSION = Version(open('VERSION').read().strip())
 
@@ -221,7 +221,7 @@ _re = re.compile(r'^requirements\.(?P<name>[^\.]+)\.txt$')
 for fname in sorted(os.listdir('.')):
     match = _re.match(fname)
     if match:
-        SETUP_DATA.append(fname)
+        ZETUP_DATA.append(fname)
 
         EXTRAS[match.group('name')] = open(fname).read()
 
@@ -239,6 +239,7 @@ def zetup(**setup_options):
       ('url', URL),
       ('license', LICENSE),
       ('install_requires', REQUIRES),
+      ('extras_require', EXTRAS),
       ('classifiers', CLASSIFIERS),
       ('keywords', KEYWORDS),
       ]:
