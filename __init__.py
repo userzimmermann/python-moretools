@@ -195,7 +195,7 @@ class Extras(OrderedDict):
 
 config = ConfigParser()
 for fname in ['zetup.ini', 'zetup.cfg', 'zetuprc']:
-    if config.read(fname):
+    if config.read(os.path.join(ZETUP_DIR, fname)):
         ##TODO: No print after installation (under pkg/zetup/):
         ## print("zetup: Using config from %s" % fname)
         ZETUP_DATA = [fname]
