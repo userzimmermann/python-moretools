@@ -1,7 +1,3 @@
-import sys
-from subprocess import call
-
-
 # Run the zetup script:
 exec(open('__init__.py').read())
 
