@@ -6,9 +6,10 @@ python:
   - pypy
 
 install:
-  - pip install .
+  - pip install -r requirements.txt
+  - zetup install
   - pip install pytest
 
 script:
-  - python setup.py pytest
+  - zetup pytest
   - py.test pytest
