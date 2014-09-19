@@ -1,4 +1,5 @@
 setuptools
 six
-path.py # path
+path.py #import path
 decorator
+zetup
