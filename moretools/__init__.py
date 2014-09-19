@@ -22,14 +22,17 @@
    extending itertools, functools and operator.
 """
 
-from . import zetup
+from zetup import find_zetup_config
 
-__distribution__ = zetup.DISTRIBUTION.find(__path__[0])
-__description__ = zetup.DESCRIPTION
 
-__version__ = zetup.VERSION
+zfg = find_zetup_config(__name__)
 
-__requires__ = zetup.REQUIRES.checked
+__distribution__ = zfg.DISTRIBUTION.find(__path__[0])
+__description__ = zfg.DESCRIPTION
+
+__version__ = zfg.VERSION
+
+__requires__ = zfg.REQUIRES.checked
 
 
 from ._map import *
