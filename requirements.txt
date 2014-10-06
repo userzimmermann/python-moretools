@@ -2,4 +2,4 @@ setuptools
 six
 path.py #import path
 decorator
-zetup
+zetup >= 0.2.2
