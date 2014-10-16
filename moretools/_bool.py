@@ -2,6 +2,8 @@ from six import with_metaclass
 
 __all__ = ['booltype', 'isbooltype', 'isbool']
 
+from inspect import isclass
+
 
 class Type(type):
     def __contains__(cls, value):
@@ -54,6 +56,8 @@ booltype.base = Bool
 
 
 def isbooltype(cls):
+    if not isclass(cls):
+        return False
     return issubclass(cls, (bool, Bool))
 
 
