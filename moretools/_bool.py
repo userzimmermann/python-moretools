@@ -20,7 +20,13 @@ class Bool(object):
         return repr(self.value)
 
 
-def booltype(typename, true=None, false=None): ## , strict=True):
+def booltype(typename='Bool', true=None, false=None, base=Bool):
+    ## , strict=True):
+
+    if not issubclass(base, Bool):
+        raise TypeError("'base' is no subclass of booltype.base: %s"
+                        % base)
+
     class Type(type):
         pass
 
@@ -34,7 +40,10 @@ def booltype(typename, true=None, false=None): ## , strict=True):
     ##     self.value = bool(value in cls.true
     ##       or value not in cls.false and value)
 
-    return Type(typename, (Bool,), {}) ## '__init__': __init__})
+    return Type(typename, (base,), {}) ## '__init__': __init__})
+
+
+booltype.base = Bool
 
 
 def isbooltype(cls):
