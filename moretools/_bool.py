@@ -1,7 +1,14 @@
+from six import with_metaclass
+
 __all__ = ['booltype', 'isbooltype', 'isbool']
 
 
-class Bool(object):
+class Type(type):
+    def __contains__(cls, value):
+        return isbool(value) or value in cls.true or value in cls.false
+
+
+class Bool(with_metaclass(Type, object)):
     def __init__(self, value):
         cls = type(self)
         if isbool(value):
@@ -27,7 +34,7 @@ def booltype(typename='Bool', true=None, false=None, base=Bool):
         raise TypeError("'base' is no subclass of booltype.base: %s"
                         % base)
 
-    class Type(type):
+    class Type(type(Bool)):
         pass
 
     Type.true = true
