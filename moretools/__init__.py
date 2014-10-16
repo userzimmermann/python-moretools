@@ -46,6 +46,7 @@ from ._get import *
 from ._set import *
 from ._has import *
 from ._del import *
+from ._bool import *
 from ._collections import *
 from ._simpledict import *
 from ._multi import *
