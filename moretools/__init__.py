@@ -57,3 +57,4 @@ from ._lazy import *
 from ._cached import *
 from ._log import *
 from ._xmlrpc import *
+from ._types import *
