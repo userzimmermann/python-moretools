@@ -21,7 +21,7 @@
 """Common imports of standard itertools, functools and operators
    and Python 2/3 unifications.
 """
-from six import PY2
+from six import *
 
 from operator import *
 from itertools import *
