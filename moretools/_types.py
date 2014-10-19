@@ -96,6 +96,15 @@ def isstring(value):
     return isinstance(value, string_types)
 
 
+def istupleclass(cls):
+    return issubclass(cls, tuple)
+
+istupletype = istupleclass
+
+def istuple(value):
+    return isinstance(value, tuple)
+
+
 def islistclass(cls):
     return issubclass(cls, list_types)
 
