@@ -23,7 +23,7 @@ from _common import *
 from six.moves import UserString, UserList, UserDict
 
 
-number_types = integer_types + (float,)
+number_types = integer_types + (float, complex)
 
 string_types = (string_types) + (UserString,)
 
@@ -67,6 +67,15 @@ isfloattype = isfloatclass
 
 def isfloat(value):
     return isinstance(value, float)
+
+
+def iscomplexclass(cls):
+    return issubclass(cls, complex)
+
+iscomplextype = iscomplexclass
+
+def iscomplex(value):
+    return isinstance(value, complex)
 
 
 def isnumberclass(cls):
