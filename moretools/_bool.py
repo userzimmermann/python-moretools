@@ -1,6 +1,26 @@
+# python-moretools
+#
+# many more basic tools for python 2/3
+# extending itertools, functools and operator
+#
+# Copyright (C) 2011-2014 Stefan Zimmermann <zimmermann.code@gmail.com>
+#
+# python-moretools is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# python-moretools is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
+
 from six import with_metaclass
 
-__all__ = ['booltype', 'isbooltype', 'isbool']
+__all__ = ['boolclass', 'booltype', 'isboolclass', 'isbooltype', 'isbool']
 
 from inspect import isclass
 
@@ -29,11 +49,11 @@ class Bool(with_metaclass(Type, object)):
         return repr(self.value)
 
 
-def booltype(typename='Bool', true=None, false=None, base=Bool):
+def boolclass(typename='Bool', true=None, false=None, base=Bool):
     ## , strict=True):
 
     if not issubclass(base, Bool):
-        raise TypeError("'base' is no subclass of booltype.base: %s"
+        raise TypeError("'base' is no subclass of boolclass.base: %s"
                         % base)
 
     class Type(type(base)):
@@ -51,14 +71,18 @@ def booltype(typename='Bool', true=None, false=None, base=Bool):
 
     return Type(typename, (base,), {}) ## '__init__': __init__})
 
+booltype = boolclass
 
-booltype.base = Bool
+
+boolclass.base = Bool
 
 
-def isbooltype(cls):
+def isboolclass(cls):
     if not isclass(cls):
         return False
     return issubclass(cls, (bool, Bool))
+
+isbooltype = isboolclass
 
 
 def isbool(obj):
