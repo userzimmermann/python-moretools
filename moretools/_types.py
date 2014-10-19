@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-from _common import *
+from ._common import *
 
 from six.moves import UserString, UserList, UserDict
 
