@@ -36,7 +36,7 @@ def booltype(typename='Bool', true=None, false=None, base=Bool):
         raise TypeError("'base' is no subclass of booltype.base: %s"
                         % base)
 
-    class Type(type(Bool)):
+    class Type(type(base)):
         pass
 
     Type.true = true
