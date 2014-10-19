@@ -114,6 +114,15 @@ def islist(value):
     return isinstance(value, list_types)
 
 
+def issetclass(cls):
+    return issubclass(cls, set)
+
+issettype = issetclass
+
+def isset(value):
+    return isinstance(value, set)
+
+
 def isdictclass(cls):
     return issubclass(cls, dict_types)
 
