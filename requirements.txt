@@ -1,5 +1,3 @@
-setuptools
-six
-path.py #import path
-decorator
 zetup >= 0.2.2
+six
+decorator
