@@ -332,7 +332,8 @@ def simpledict(
         frozenbase = frozenbasetype
     if frozenbase:
         frozenbase = frozenbase.type(base)
-        metaclass.frozen = metaclass(typename, (frozenbase,), {})
+        metaclass.frozen = metaclass(
+          typename + '.frozen', (frozenbase,), {})
     # ... and a simpledict struct type from the custom meta type
     if basestructtype:
         warn("Use structbase= instead of basestructtype=.",
@@ -340,7 +341,8 @@ def simpledict(
         structbase = basestructtype
     if structbase:
         structbase = structbase.type(base)
-        metaclass.struct = metaclass(typename, (structbase,), {})
+        metaclass.struct = metaclass(
+          typename + '.struct', (structbase,), {})
     # finally create the normal simpledict type from the custom meta type
     return metaclass(typename, (base,), {})
 
