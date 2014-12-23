@@ -24,7 +24,7 @@ Various container types with a combined interface to multiple `dict`s.
 
 .. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
-__all__ = ['MultiDictType', 'DictSet', 'DictZip']
+__all__ = ['MultiDictType', 'DictSet', 'DictZip', 'DictStruct']
 
 from six import with_metaclass
 
@@ -107,3 +107,36 @@ class DictZip(MultiDictType):
         if _NoValue in valuetuple:
             raise KeyError(key)
         return valuetuple
+
+
+class DictStruct(MultiDictType, dict):
+    def __init__(self, name, bases, mapping=None, **items):
+        self.__name__ = name
+        self.__bases__ = tuple(bases)
+        dict.__init__(self, mapping, **items)
+
+    def __len__(self):
+        return len(set(chain(
+          dict.keys(self), *(d.keys() for d in self.__bases__))))
+
+    def __getitem__(self, key):
+        try:
+            return dict.__getitem__(self, key)
+        except KeyError:
+            for d in self.__bases__:
+                try:
+                    return d[key]
+                except KeyError:
+                    pass
+        raise KeyError(key)
+
+    def keys(self):
+        for key in set(chain(
+          dict.keys(self), *(d.keys() for d in self.__bases__)
+          )):
+            yield key
+
+    def __repr__(self):
+        return '%s(%s, %s, %s)' % (
+          type(self).__name__, repr(self.__name__), repr(self.__bases__),
+          dict.__repr__(self))
