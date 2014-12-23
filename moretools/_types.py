@@ -19,6 +19,7 @@
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
 from ._common import *
+from ._simpledict import SimpleDictType
 
 from six.moves import UserString, UserList, UserDict
 
@@ -29,7 +30,7 @@ string_types = (string_types) + (UserString,)
 
 list_types = (list, UserList)
 
-dict_types = (dict, UserDict)
+dict_types = (dict, UserDict, SimpleDictType)
 
 
 def isintclass(cls):
