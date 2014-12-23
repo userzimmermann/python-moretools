@@ -43,12 +43,14 @@ from ._filter import *
 from ._query import *
 from ._caller import *
 from ._get import *
+from ._pop import *
 from ._set import *
 from ._has import *
 from ._del import *
 from ._bool import *
 from ._collections import *
 from ._simpledict import *
+from ._dict import *
 from ._multi import *
 from ._string import *
 from ._multidict import *
@@ -59,3 +61,9 @@ from ._log import *
 from ._xmlrpc import *
 from ._types import *
 from ._operator import *
+
+
+# six-like aliases for dict... functions
+iterkeys = dictkeys
+itervalues = dictvalues
+iteritems = dictitems
