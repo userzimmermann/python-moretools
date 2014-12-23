@@ -32,6 +32,7 @@ __all__ = [
   'simpledict']
 
 from warnings import warn
+from inspect import isclass
 import re as _re
 
 from ._common import *
@@ -349,3 +350,17 @@ simpledict.structbase = SimpleDictStructType
 simpledict.KeyToAttrError = KeyToAttrError
 simpledict.KeyToAttrToKeyMismatch = KeyToAttrToKeyMismatch
 simpledict.AttrToKeyToAttrMismatch = AttrToKeyToAttrMismatch
+
+
+def issimpledict(obj):
+    """Check if `obj` is a simpledict instance.
+    """
+    return isinstance(obj, SimpleDictType)
+
+
+def issimpledictclass(cls):
+    """Check if `cls` is a simpledict class.
+    """
+    if not isclass(cls):
+        return False
+    return issubclass(obj, SimpleDictType)
