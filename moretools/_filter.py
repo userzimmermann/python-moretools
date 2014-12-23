@@ -18,7 +18,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""functions for filtering sequence elements by attr/item checking
+"""moretools._filter
+
+Functions for creating sequence filter functions from item decider functions
+and functions for filtering sequence elements by attr/item checking.
+
+.. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
 
 from ._common import *
