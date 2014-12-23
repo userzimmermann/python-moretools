@@ -29,7 +29,10 @@ from six import with_metaclass
 
 __all__ = [
   'SimpleDictType', 'SimpleFrozenDictType', 'SimpleDictStructType',
-  'simpledict']
+  'simpledict', 'issimpledict', 'issimpledictclass',
+  'issimplefrozendict', 'issimplefrozendictclass',
+  'issimpledictstruct', 'issimpledictstructclass',
+  ]
 
 from warnings import warn
 from inspect import isclass
@@ -363,4 +366,32 @@ def issimpledictclass(cls):
     """
     if not isclass(cls):
         return False
-    return issubclass(obj, SimpleDictType)
+    return issubclass(cls, SimpleDictType)
+
+
+def issimplefrozendict(obj):
+    """Check if `obj` is a <simpledict class>.frozen instance.
+    """
+    return isinstance(obj, SimpleFrozenDictType)
+
+
+def issimplefrozendictclass(cls):
+    """Check if `cls` is a <simpledict class>.frozen class.
+    """
+    if not isclass(cls):
+        return False
+    return issubclass(cls, SimpleFrozenDictType)
+
+
+def issimpledictstruct(obj):
+    """Check if `obj` is a <simpledict class>.struct instance.
+    """
+    return isinstance(obj, SimpleDictStructType)
+
+
+def issimpledictstructclass(cls):
+    """Check if `cls` is a <simpledict class>.struct class.
+    """
+    if not isclass(cls):
+        return False
+    return issubclass(cls, SimpleDictStructType)
