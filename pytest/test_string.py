@@ -1,22 +1,37 @@
+"""Test the moretools._string module.
+
+.. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
+"""
+
 import pytest
 
 from moretools import camelize, decamelize, isidentifier
 
 
+CAMELIZED = {
+  'me': 'Me',
+  'me_too': 'MeToo',
+  }.items()
+
+
 def test_camelize():
-    for lower_case, CamelCase in [
-      ('me', 'Me'),
-      ('me_too', 'MeToo'),
-      ]:
+    """Test the string camelize() function.
+    """
+    for lower_case, CamelCase in CAMELIZED:
         assert camelize(lower_case) == CamelCase
 
 
 def test_decamelize():
-    assert decamelize('Me') == 'me'
-    assert decamelize('MeToo') == 'me_too'
+    """Test the string decamelize() function.
+    """
+    for lower_case, CamelCase in CAMELIZED:
+        assert decamelize(CamelCase) == lower_case
 
 
 def test_isidentifier():
+    """Test the isidentifier() function,
+       which checks if a string contains a valid Python identifier.
+    """
     for name in [
       'va_lid',
       '_va_lid',
