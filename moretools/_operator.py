@@ -50,4 +50,4 @@ in_ = logic_op(in_)
 contains = logic_op('contains')
 
 
-from _is import *
+from ._is import *

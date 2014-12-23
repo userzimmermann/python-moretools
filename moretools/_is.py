@@ -1,8 +1,8 @@
-from _common import *
+from ._common import *
 
-from _tester import AttrTester, KeyTester
-from _operator import logic_op
-from _operator import *
+from ._tester import AttrTester, KeyTester
+from ._operator import logic_op
+from ._operator import *
 
 
 class _is_(object):
