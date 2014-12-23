@@ -113,7 +113,10 @@ class DictStruct(MultiDictType, dict):
     def __init__(self, name, bases, mapping=None, **items):
         self.__name__ = name
         self.__bases__ = tuple(bases)
-        dict.__init__(self, mapping, **items)
+        if mapping is None:
+            dict.__init__(self, **items)
+        else:
+            dict.__init__(self, mapping, **items)
 
     def __len__(self):
         return len(set(chain(
