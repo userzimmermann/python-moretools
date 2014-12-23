@@ -20,15 +20,17 @@
 
 """moretools._dict
 
-Functions for getting iterators of dictionary keys/values/items,
+Functions for getting iterators of dictionary keys/values/items
+and filtering dictionary items,
 which also work with simpledict instances.
 
 .. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
 
-__all__ = ['dictkeys', 'dictvalues', 'dictitems']
+__all__ = ['dictkeys', 'dictvalues', 'dictitems', 'dictfilter']
 
 from ._common import *
+from ._undefined import undefined
 from ._simpledict import issimpledict
 from ._types import isdict
 
@@ -57,3 +59,14 @@ def dictitems(d):
     if issimpledict(d):
         d = d.__dict__
     return six.iteritems(d)
+
+
+def dictfilter(func, d, key=undefined, value=undefined):
+    for k, v in dictitems(d):
+        if func is not None and not func(k, v):
+            continue
+        if key is not undefined and key != k:
+            continue
+        if value is not undefined and value != v:
+            continue
+        yield k, v
