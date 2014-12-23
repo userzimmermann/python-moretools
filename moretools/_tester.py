@@ -22,6 +22,9 @@ class Tester(with_metaclass(Meta, object)):
     def __eq__(self, value):
         return self(value)
 
+    def __ne__(self, value):
+        return not self(value)
+
     def and_(self, tester):
         return AndTester(self, tester)
 
