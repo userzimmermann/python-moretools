@@ -23,6 +23,7 @@ from six import with_metaclass
 __all__ = ['boolclass', 'booltype', 'isboolclass', 'isbooltype', 'isbool']
 
 from inspect import isclass
+from functools import total_ordering
 
 
 class Type(type):
@@ -30,6 +31,7 @@ class Type(type):
         return isbool(value) or value in cls.true or value in cls.false
 
 
+@total_ordering
 class Bool(with_metaclass(Type, object)):
     def __init__(self, value):
         cls = type(self)
@@ -44,6 +46,15 @@ class Bool(with_metaclass(Type, object)):
 
     def __nonzero__(self):
         return self.value
+
+    def __eq__(self, value):
+        return isbool(value) and self.value == bool(value)
+
+    def __lt__(self, value):
+        if not isbool(value):
+            raise TypeError("Unorderable types: %s and %s" % (
+              type(self), type(value)))
+        return self.value < bool(value)
 
     def __repr__(self):
         return repr(self.value)
