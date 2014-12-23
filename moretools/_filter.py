@@ -23,6 +23,52 @@
 
 from ._common import *
 from ._common import _map, _filter
+from ._undefined import undefined
+
+
+def filter(func, seq=undefined):
+    """Replacement for builtin filter().
+
+    - With both arguments it works like builtin filter()
+      (itertools.ifilter() in PY2).
+    - If only `func` is given, a new function is returned,
+      which only takes a sequence as argument and applies
+      given `func` and this sequence to builtin filter(),
+      which makes filter() also usable as decorator:
+
+    .. code:: python
+
+        @filter
+        def func(item):
+            ...
+            return <True/False>
+
+        filtered_seq = func(seq)
+    """
+    if seq is undefined:
+        def filter(seq):
+            return _filter(func, seq)
+
+        filter.__name__ = func.__name__
+        return filter
+
+    return _filter(func, seq)
+
+
+def filtermethod(func):
+    """Decorator for turning methods into filter methods,
+       which filter items from given sequences
+       depending on the boolean truth of the return values
+       from calling `func` with each item from the sequence.
+
+    - Works like :func:`moretools.filter` if only called with `func` argument,
+      but additionally handles the _self_ argument of given `func`.
+    """
+    def filter(self, seq):
+        return _filter(partial(func, self), seq)
+
+    filter.__name__ = func.__name__
+    return filter
 
 
 def filterattrs(seq, *attrs, **attrs_and_values):
