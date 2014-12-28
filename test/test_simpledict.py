@@ -1,5 +1,8 @@
 """Test the moretools._simpledict module.
 
+- issimple...dict...class() functions
+  are implicitly tested in check_...class() functions.
+
 .. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
 
