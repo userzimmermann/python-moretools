@@ -14,7 +14,7 @@ from moretools import (
 
 
 def test_aliases():
-    """Just test that six-like iter... aliases for dict... functions
+    """Just test that six-like iter...() aliases for dict...() functions
        are correctly assigned.
     """
     assert iterkeys is dictkeys and itervalues is dictvalues \
