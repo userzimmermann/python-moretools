@@ -1,9 +1,39 @@
+# python-moretools
+#
+# many more basic tools for python 2/3
+# extending itertools, functools and operator
+#
+# Copyright (C) 2011-2014 Stefan Zimmermann <zimmermann.code@gmail.com>
+#
+# python-moretools is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# python-moretools is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
+
+"""moretools._tester
+
+
+.. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
+"""
 from six import with_metaclass
 
 __all__ = ['Tester', 'NotTester']
 
 
 class Meta(type):
+    """Metaclass for :class:`moretools.Tester`
+
+    - Allows creating Tester subclasses for certain logic functions
+      via Tester[<logic>]
+    """
     def __getitem__(cls, logic):
         class tester(cls):
             pass
@@ -13,16 +43,35 @@ class Meta(type):
 
 
 class Tester(with_metaclass(Meta, object)):
+    """Base class for creating logical value testers.
+
+    - Create subclass with associated logic function via Tester[<logic>]
+    - Instantiate Tester with right hand logic function args.
+    - Test value using <Tester instance>(value)
+      or <Tester instance> == value,
+      which calls <logic>(value, *<right hand args>),
+      (which should return True or False),
+      or negatively test it using <Tester instance> != value
+    """
     def __init__(self, *args):
+        """Instantiate Tester using `args` as right hand args
+           for calling the logic function.
+        """
         self.args = args
 
     def __call__(self, value):
+        """Test `value`.
+        """
         return self.logic(value, *self.args)
 
     def __eq__(self, value):
+        """Test `value`.
+        """
         return self(value)
 
     def __ne__(self, value):
+        """Negatively test `value`.
+        """
         return not self(value)
 
     def and_(self, tester):
