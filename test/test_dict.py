@@ -21,60 +21,61 @@ def test_aliases():
       and iteritems is dictitems
 
 
-# the reference dictionaries to test functions with
-ORDERED_DICT = OrderedDict([
-  ('one', [2]),
-  (3, ('f', 'o', 'u', 'r')),
-  (5.6, 7),
-  (('eight', 9), {10}),
-  ])
-DICT = dict(ORDERED_DICT)
+@pytest.fixture(scope='module', params=[dict, OrderedDict])
+def dict_(request):
+    """Reference dictionaries of different types
+       to test dict...() functions with.
+    """
+    dictclass = request.param
+    return dictclass([
+      ('one', [2]),
+      (3, ('f', 'o', 'u', 'r')),
+      (5.6, 7),
+      (('eight', 9), {10}),
+      ])
 
 
-def test_dictkeys():
+def test_dictkeys(dict_):
     """Test the dictkeys() function,
        which returns an iterator of a dictionary's keys
        and also works with simpledict() class instances.
     """
-    for d in [DICT, ORDERED_DICT]:
-        keys = dictkeys(d)
-        # dictkeys() should not return lists, only iterators
-        assert not isinstance(keys, list)
-        # compare with reference sequence from dict method
-        assert all(map(is_, keys, d.keys()))
-        # and check that iterator is exhausted
-        with pytest.raises(StopIteration):
-            next(keys)
+    keys = dictkeys(dict_)
+    # dictkeys() should not return lists, only iterators
+    assert not isinstance(keys, list)
+    # compare with reference sequence from dict method
+    assert all(map(is_, keys, dict_.keys()))
+    # and check that iterator is exhausted
+    with pytest.raises(StopIteration):
+        next(keys)
 
 
-def test_dictvalues():
+def test_dictvalues(dict_):
     """Test the dictvalues() function,
        which returns an iterator of a dictionary's values
        and also works with simpledict() class instances.
     """
-    for d in [DICT, ORDERED_DICT]:
-        values = dictvalues(d)
-        # dictvalues() should not return lists, only iterators
-        assert not isinstance(values, list)
-        # compare with reference sequence from dict method
-        assert all(map(is_, values, d.values()))
-        # and check that iterator is exhausted
-        with pytest.raises(StopIteration):
-            next(values)
+    values = dictvalues(dict_)
+    # dictvalues() should not return lists, only iterators
+    assert not isinstance(values, list)
+    # compare with reference sequence from dict method
+    assert all(map(is_, values, dict_.values()))
+    # and check that iterator is exhausted
+    with pytest.raises(StopIteration):
+        next(values)
 
 
-def test_dictitems():
+def test_dictitems(dict_):
     """Test the dictitems() function,
        which returns an iterator of a dictionary's (key, value) pairs
        and also works with simpledict() class instances.
     """
-    for d in [DICT, ORDERED_DICT]:
-        items = dictitems(d)
-        # dictitems() should not return lists, only iterators
-        assert not isinstance(items, list)
-        # compare with reference sequence from dict method
-        for (key, value), (refkey, refvalue) in zip(items, d.items()):
-            assert key is refkey and refvalue is refvalue
-        # and check that iterator is exhausted
-        with pytest.raises(StopIteration):
-            next(items)
+    items = dictitems(dict_)
+    # dictitems() should not return lists, only iterators
+    assert not isinstance(items, list)
+    # compare with reference sequence from dict method
+    for (key, value), (refkey, refvalue) in zip(items, dict_.items()):
+        assert key is refkey and refvalue is refvalue
+    # and check that iterator is exhausted
+    with pytest.raises(StopIteration):
+        next(items)
