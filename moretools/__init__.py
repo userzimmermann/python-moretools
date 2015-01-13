@@ -67,3 +67,10 @@ from ._operator import *
 iterkeys = dictkeys
 itervalues = dictvalues
 iteritems = dictitems
+
+
+def qualname(cls):
+    try:
+        return cls.__qualname__
+    except AttributeError:
+        return cls.__name__
