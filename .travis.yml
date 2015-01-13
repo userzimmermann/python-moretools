@@ -10,7 +10,9 @@ install:
   - pip install zetup[commands]
   - zetup install
   - pip install pytest
+  - pip install tox
 
 script:
   - zetup pytest
-  - py.test test/
+  - py.test -v test/
+  - tox -rv
