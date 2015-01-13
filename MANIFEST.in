@@ -9,4 +9,4 @@ include README.md
 
 include tox.ini
 
-recursive-include pytest *.py
+recursive-include test/ *.py
