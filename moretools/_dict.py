@@ -61,12 +61,19 @@ def dictitems(d):
     return six.iteritems(d)
 
 
-def dictfilter(func, d, key=undefined, value=undefined):
-    for k, v in dictitems(d):
-        if func is not None and not func(k, v):
-            continue
-        if key is not undefined and key != k:
-            continue
-        if value is not undefined and value != v:
-            continue
-        yield k, v
+def dictfilter(func, d=undefined, key=undefined, value=undefined):
+    def filter(d):
+        for k, v in dictitems(d):
+            if func is not None and not func(k, v):
+                continue
+            if key is not undefined and key != k:
+                continue
+            if value is not undefined and value != v:
+                continue
+            yield k, v
+
+    if d is undefined:
+        filter.__name__ = func.__name__
+        return filter
+
+    return filter(d)
