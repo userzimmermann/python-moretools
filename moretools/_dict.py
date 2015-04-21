@@ -20,7 +20,7 @@
 
 """moretools._dict
 
-Functions for getting iterators of dictionary keys/values/items
+Functions for Python 2/3-unified iteration of dictionary keys/values/items
 and filtering dictionary items,
 which also work with simpledict instances.
 
@@ -38,6 +38,10 @@ import six
 
 
 def dictkeys(d):
+    """Iterate the keys of dictionary `d` in a Python 2/3-unified way.
+
+    - Also supports func:`moretools.simpledict` instances.
+    """
     if not isdict(d):
         raise TypeError("dictkeys() arg must be a dictionary")
     if issimpledict(d):
@@ -46,6 +50,10 @@ def dictkeys(d):
 
 
 def dictvalues(d):
+    """Iterate the values of dictionary `d` in a Python 2/3-unified way.
+
+    - Also supports func:`moretools.simpledict` instances.
+    """
     if not isdict(d):
         raise TypeError("dictvalues() arg must be a dictionary")
     if issimpledict(d):
@@ -54,6 +62,11 @@ def dictvalues(d):
 
 
 def dictitems(d):
+    """Iterate the (key, value) pairs of dictionary `d`
+       in a Python 2/3-unified way.
+
+    - Also supports func:`moretools.simpledict` instances.
+    """
     if not isdict(d):
         raise TypeError("dictitems() arg must be a dictionary")
     if issimpledict(d):
@@ -62,6 +75,21 @@ def dictitems(d):
 
 
 def dictfilter(func, d=undefined, key=undefined, value=undefined):
+    """Filter the (key, value) pairs of dictionary `d`
+       by iterating all pairs for which:
+
+    1. The filter `func`, called with key and value as separate arguments,
+       returns a True value.
+    2. The comparisons of key and value
+       with the optional `key=` and `value=` args are True.
+
+    - `func` may be None to only check against `key=` and `value=` args.
+    - If no dictionary is given,
+      a ``functools.partial()``-like object is returned,
+      which can later be called with a dictionary argument
+      and is therefore usable for functional expressions like ``map(...)``
+    - Also supports func:`moretools.simpledict` instances.
+    """
     def filter(d):
         for k, v in dictitems(d):
             if func is not None and not func(k, v):
