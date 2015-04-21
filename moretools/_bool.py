@@ -18,6 +18,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
+"""moretools._bool
+
+Tools for creating custom bool classes with .true and .false value lists.
+
+.. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
+"""
 from six import with_metaclass
 
 __all__ = ['boolclass', 'booltype', 'isboolclass', 'isbooltype', 'isbool']
@@ -26,14 +32,26 @@ from inspect import isclass
 from functools import total_ordering
 
 
-class Type(type):
+class Meta(type):
+    """Base metaclass for :func:`moretools.boolclass` creator.
+    """
     def __contains__(cls, value):
+        """Check if `value` is a valid initialization value for
+           :class:`moretools.Bool`-derived `cls`.
+        """
         return isbool(value) or value in cls.true or value in cls.false
 
 
 @total_ordering
-class Bool(with_metaclass(Type, object)):
+class Bool(with_metaclass(Meta, object)):
+    """Base class for :func:`moretools.boolclass` creator.
+    """
     def __init__(self, value):
+        """Initialize with True or False
+           by checking if `value` is a builtin bool or Bool-derived value
+           or is contained in the custom .true or .false list
+           of the own Bool-derived class.
+        """
         cls = type(self)
         if isbool(value):
             self.value = bool(value)
@@ -61,26 +79,30 @@ class Bool(with_metaclass(Type, object)):
 
 
 def boolclass(typename='Bool', true=None, false=None, base=Bool):
+    """Create a custom bool class which can only be initialized
+       with builtin bool values, instances of boolclass()-created classes
+       or values contained in the given `true` or `false` sequence.
+
+    - Optionally takes a custom `base` class,
+      which must be derived from default boolclass.base
+    """
     ## , strict=True):
 
     if not issubclass(base, Bool):
         raise TypeError("'base' is no subclass of boolclass.base: %s"
                         % base)
 
-    class Type(type(base)):
+    # store true and false lists as metaclass attributes
+    # to keep it away from instances of created class
+    class Meta(type(base)):
         pass
 
-    Type.true = true
-    Type.false = false
+    Meta.true = true
+    Meta.false = false
 
-    ## Type.strict = strict
+    ## Meta.strict = strict
 
-    ## def __init__(self, value):
-    ##     cls = type(self)
-    ##     self.value = bool(value in cls.true
-    ##       or value not in cls.false and value)
-
-    return Type(typename, (base,), {}) ## '__init__': __init__})
+    return Meta(typename, (base,), {})
 
 booltype = boolclass
 
@@ -89,6 +111,9 @@ boolclass.base = Bool
 
 
 def isboolclass(cls):
+    """Check if `cls` is builtin bool
+       or a :func:`moretools.boolclass`-created class.
+    """
     if not isclass(cls):
         return False
     return issubclass(cls, (bool, Bool))
@@ -97,4 +122,7 @@ isbooltype = isboolclass
 
 
 def isbool(obj):
+    """Check if `obj` is a builtin bool
+       or an instance of a :func:`moretools.boolclass`-created class.
+    """
     return isinstance(obj, (bool, Bool))
