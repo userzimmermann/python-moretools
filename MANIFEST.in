@@ -10,3 +10,8 @@ include README.md
 include tox.ini
 
 recursive-include test/ *.py
+
+exclude .hg*
+exclude .tf*
+exclude *.yml
+exclude *.jinja
