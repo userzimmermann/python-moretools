@@ -26,6 +26,8 @@ Logging helpers.
 """
 __all__ = ['logged']
 
+from decorator import decorator
+
 from ._common import *
 
 

@@ -28,6 +28,8 @@ __all__ = ['cached']
 
 from inspect import getargspec
 
+from decorator import decorator
+
 from ._common import *
 
 

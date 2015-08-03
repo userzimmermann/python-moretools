@@ -27,7 +27,7 @@ from operator import *
 from itertools import *
 from functools import *
 from collections import *
-from decorator import *
+## from decorator import *
 
 
 if PY2: # always use the iterator variants of the following standard tools
