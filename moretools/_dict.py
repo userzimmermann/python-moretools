@@ -27,9 +27,8 @@ which also work with simpledict instances.
 .. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
 
-__all__ = ['dictkeys', 'dictvalues', 'dictitems', 'dictfilter']
+__all__ = ['dictkeys', 'dictvalues', 'dictitems', 'dictupdate', 'dictfilter']
 
-from ._common import *
 from ._undefined import undefined
 from ._simpledict import issimpledict
 from ._types import isdict
@@ -37,45 +36,64 @@ from ._types import isdict
 import six
 
 
-def dictkeys(d):
-    """Iterate the keys of dictionary `d` in a Python 2/3-unified way.
+def dictkeys(obj):
+    """Iterate the keys of dictionary `obj` in a Python 2/3-unified way.
 
-    - Also supports func:`moretools.simpledict` instances.
+    - Also supports :func:`moretools.simpledict` instances.
     """
-    if not isdict(d):
+    if not isdict(obj):
         raise TypeError("dictkeys() arg must be a dictionary")
-    if issimpledict(d):
-        d = d.__dict__
-    return six.iterkeys(d)
+    if issimpledict(obj):
+        obj = obj.__dict__
+    return six.iterkeys(obj)
 
 
-def dictvalues(d):
-    """Iterate the values of dictionary `d` in a Python 2/3-unified way.
+def dictvalues(obj):
+    """Iterate the values of dictionary `obj` in a Python 2/3-unified way.
 
-    - Also supports func:`moretools.simpledict` instances.
+    - Also supports :func:`moretools.simpledict` instances.
     """
-    if not isdict(d):
+    if not isdict(obj):
         raise TypeError("dictvalues() arg must be a dictionary")
-    if issimpledict(d):
-        d = d.__dict__
-    return six.itervalues(d)
+    if issimpledict(obj):
+        obj = obj.__dict__
+    return six.itervalues(obj)
 
 
-def dictitems(d):
-    """Iterate the (key, value) pairs of dictionary `d`
+def dictitems(obj):
+    """Iterate the (key, value) pairs of dictionary `obj`
        in a Python 2/3-unified way.
 
-    - Also supports func:`moretools.simpledict` instances.
+    - Also supports :func:`moretools.simpledict` instances.
     """
-    if not isdict(d):
+    if not isdict(obj):
         raise TypeError("dictitems() arg must be a dictionary")
-    if issimpledict(d):
-        d = d.__dict__
-    return six.iteritems(d)
+    if issimpledict(obj):
+        obj = obj.__dict__
+    return six.iteritems(obj)
 
 
-def dictfilter(func, d=undefined, key=undefined, value=undefined):
-    """Filter the (key, value) pairs of dictionary `d`
+def dictupdate(obj, mapping=None, **items):
+    """Update items in dictionary `obj` from `mapping` and/or keyword args.
+
+    - Like calling ``obj.update(mapping, **items)``, but also returns `obj`
+      and also supports :func:`moretools.simpledict` instances.
+    """
+    if not isdict(obj):
+        raise TypeError("dictupdate() arg must be a dictionary")
+    if issimpledict(obj):
+        dict_ = obj.__dict__
+    else:
+        dict_ = obj
+    if mapping is None:
+        dict_.update(**items)
+    else:
+        dict_.update(mapping, **items)
+    return obj
+
+
+def dictfilter(func, obj=undefined, key=undefined, value=undefined):
+    """Filter the (key, value) pairs of dictionary `obj`
        by iterating all pairs for which:
 
     1. The filter `func`, called with key and value as separate arguments,
@@ -88,10 +106,10 @@ def dictfilter(func, d=undefined, key=undefined, value=undefined):
       a ``functools.partial()``-like object is returned,
       which can later be called with a dictionary argument
       and is therefore usable for functional expressions like ``map(...)``
-    - Also supports func:`moretools.simpledict` instances.
+    - Also supports :func:`moretools.simpledict` instances.
     """
-    def filter(d):
-        for k, v in dictitems(d):
+    def filter(obj):
+        for k, v in dictitems(obj):
             if func is not None and not func(k, v):
                 continue
             if key is not undefined and key != k:
@@ -100,8 +118,8 @@ def dictfilter(func, d=undefined, key=undefined, value=undefined):
                 continue
             yield k, v
 
-    if d is undefined:
+    if obj is undefined:
         filter.__name__ = func.__name__
         return filter
 
-    return filter(d)
+    return filter(obj)
