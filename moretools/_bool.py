@@ -20,109 +20,144 @@
 
 """moretools._bool
 
-Tools for creating custom bool classes with .true and .false value lists.
+Tools for creating custom bool classes
+with explicit ``.true`` and ``.false`` lists of valid instantiation values.
 
 .. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
 from six import with_metaclass
 
-__all__ = ['boolclass', 'booltype', 'isboolclass', 'isbooltype', 'isbool']
-
 from inspect import isclass
 from functools import total_ordering
 
+__all__ = ['StrictBoolMeta', 'StrictBool', 'strictbool',
+           'isboolclass', 'isbool',
+           # aliases for backwards compatibility
+           'Bool', 'boolclass', 'booltype', 'isbooltype']
 
-class Meta(type):
-    """Base metaclass for :func:`moretools.boolclass` creator.
+
+class StrictBoolMeta(type):
+    """Metaclass for :class:`moretools.StrictBool`
+       and base metaclass used in :func:`moretools.strictbool` class creator.
     """
     def __contains__(cls, value):
         """Check if `value` is a valid initialization value for
-           :class:`moretools.Bool`-derived `cls`.
+           :class:`moretools.StrictBool`-derived `cls`.
         """
         return isbool(value) or value in cls.true or value in cls.false
 
 
 @total_ordering
-class Bool(with_metaclass(Meta, object)):
-    """Base class for :func:`moretools.boolclass` creator.
+class StrictBool(with_metaclass(StrictBoolMeta, object)):
+    """Abstract base class for creating custom bool classes
+       with explicit lists of accepted true and false values.
+
+    - Derived classes just have to provide those true and false value lists
+      as ``.true`` and ``.false`` class atrributes.
+    - Also used as base class by :func:`moretools.strictbool` class creator.
     """
+    def __new__(cls, value):
+        if cls is StrictBool:
+            raise TypeError("Can't instantiate abstract %s" % repr(cls))
+        return object.__new__(cls)
+
     def __init__(self, value):
-        """Initialize with True or False
-           by checking if `value` is a builtin bool or Bool-derived value
-           or is contained in the custom .true or .false list
-           of the own Bool-derived class.
+        """Initialize with builtin True or False
+           or a :class:`StrictBool`-derived `value`
+           or a `value` contained in either ``.true`` or ``.false`` list
+           the of own :class:`StrictBool` derived class.
+
+        - Instances are usable and comparable like builtin bool values.
+        - Actual bool value gets stored as ``self.value``.
         """
         cls = type(self)
         if isbool(value):
             self.value = bool(value)
-        elif value in cls.true:
+        elif cls.true is not None and value in cls.true:
             self.value = True
-        elif value in cls.false:
+        elif cls.false is not None and value in cls.false:
             self.value = False
         else:
             raise ValueError(repr(value))
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.value
+
+    # PY2
+    __nonzero__ = __bool__
 
     def __eq__(self, value):
         return isbool(value) and self.value == bool(value)
 
     def __lt__(self, value):
         if not isbool(value):
-            raise TypeError("Unorderable types: %s and %s" % (
-              type(self), type(value)))
+            raise TypeError("Unorderable types: %s and %s"
+                            % (repr(type(self)), repr(type(value))))
         return self.value < bool(value)
 
+    def __int__(self):
+        return int(self.value)
+
+    def __str__(self):
+        return str(self.value)
+
     def __repr__(self):
+        """Just True or False.
+        """
         return repr(self.value)
 
 
-def boolclass(typename='Bool', true=None, false=None, base=Bool):
+# backwards compatibility
+Bool = StrictBool
+
+
+def strictbool(typename='Bool', true=None, false=None, base=Bool):
     """Create a custom bool class which can only be initialized
        with builtin bool values, instances of boolclass()-created classes
-       or values contained in the given `true` or `false` sequence.
+       or values contained in the given `true` or `false` sequences.
 
     - Optionally takes a custom `base` class,
-      which must be derived from default boolclass.base
+      which must be derived from default ``strictbool.base``
+      (:class:`moretools.StrictBool`).
     """
-    ## , strict=True):
-
     if not issubclass(base, Bool):
-        raise TypeError("'base' is no subclass of boolclass.base: %s"
-                        % base)
+        raise TypeError("%s is no subclass of strictbool.base"
+                        % repr(base))
+
+    class Meta(type(base)):
+        """Metaclass created by moretools.strictbool.
+        """
+        pass
 
     # store true and false lists as metaclass attributes
     # to keep it away from instances of created class
-    class Meta(type(base)):
-        pass
-
     Meta.true = true
     Meta.false = false
 
-    ## Meta.strict = strict
-
     return Meta(typename, (base,), {})
 
-booltype = boolclass
 
+strictbool.base = StrictBool
 
-boolclass.base = Bool
+# backwards compatibility
+booltype = boolclass = strictbool
 
 
 def isboolclass(cls):
-    """Check if `cls` is builtin bool
-       or a :func:`moretools.boolclass`-created class.
+    """Check if `cls` is builtin ``bool``
+       or a :class:`moretools.StrictBool`-derived class.
     """
     if not isclass(cls):
         return False
     return issubclass(cls, (bool, Bool))
 
+
+# backwards compatiblity
 isbooltype = isboolclass
 
 
 def isbool(obj):
-    """Check if `obj` is a builtin bool
-       or an instance of a :func:`moretools.boolclass`-created class.
+    """Check if `obj` is a builtin ``bool`` instance
+       or an instance of a :func:`moretools.StrictBool`-derived class.
     """
-    return isinstance(obj, (bool, Bool))
+    return isinstance(obj, (bool, StrictBool))
