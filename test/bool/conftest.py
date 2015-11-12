@@ -43,7 +43,17 @@ def strictboolclass(true_values, false_values):
 
 
 @pytest.fixture
-def strictboolobj(strictboolclass):
-    """A sample :class:`StrictBool`-derived instance.
+def strictboolobj(true_values, false_values):
+    """A real :class:`StrictBool`-derived instance.
     """
-    return strictboolclass(True)
+    class Bool(StrictBool):
+        true = true_values
+        false = false_values
+
+        def __new__(cls, value):
+            # avoid creation of builtin bool
+            # and create real Bool instance instead
+            return super(StrictBool, cls).__new__(
+                cls, StrictBool.__new__(cls, value))
+
+    return Bool(True)

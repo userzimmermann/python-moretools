@@ -13,6 +13,10 @@ import pytest
 class TestStrictBool(object):
     """Test abstract :class:`moretools.StrictBool`.
     """
+    def test_class(self):
+        assert type(StrictBool) is StrictBoolMeta
+        assert issubclass(StrictBool, int)
+
     def test_abstract(self):
         # check that abstract class can't be instantiated
         with pytest.raises(TypeError) as exc:
@@ -24,12 +28,10 @@ class TestStrictBool(object):
         # check that all defined true and false init values work correctly
         for value in [True] + true_values:
             obj = strictboolclass(value)
-            assert obj.value is True
-            assert obj
+            assert obj is True
         for value in [False] + false_values:
             obj = strictboolclass(value)
-            assert obj.value is False
-            assert not obj
+            assert obj is False
         # and that using other values raises an error
         for value in invalid_values:
             with pytest.raises(ValueError):
@@ -62,8 +64,8 @@ def test_strictbool_without_true_false(true_values, false_values):
     boolclass = strictbool('Bool')
     assert boolclass.true is type(boolclass).true is None
     assert boolclass.false is type(boolclass).false is None
-    assert boolclass(True)
-    assert not boolclass(False)
+    assert boolclass(True) is True
+    assert boolclass(False) is False
     for value in true_values + false_values:
         with pytest.raises(ValueError):
             boolclass(value)
@@ -88,15 +90,31 @@ def test_strictbool_with_custom_base():
 def test_isboolclass(strictboolclass, strictboolobj):
     """Test :func:`moretools.isboolclass` check.
     """
+    # first make sure that strictboolobj fixture
+    # is really a StrictBool instance
+    # (no common use case, as StrictBool.__new__
+    # normally returns builint bools)
+    assert not isinstance(strictboolobj, bool)
+    # then perform actual tests
     for class_ in bool, StrictBool, strictboolclass:
         assert isboolclass(class_)
-    for obj in int, 'bool', strictboolobj:
-        assert not isboolclass(obj)
+    for class_ in object, int:
+        assert not isboolclass(class_)
+    for obj in object(), False, 1, 'True', 'bool', strictboolobj:
+        with pytest.raises(TypeError) as exc:
+            isboolclass(obj)
+        assert str(exc.value) == "isboolclass() arg must be a class"
 
 
 def test_isbool(strictboolobj):
     """Test :func:`moretools.isbool` instance check.
     """
+    # first make sure that strictboolobj fixture
+    # is really a StrictBool instance
+    # (no common use case, as StrictBool.__new__
+    # normally returns builint bools)
+    assert not isinstance(strictboolobj, bool)
+    # then perform actual tests
     for obj in True, False, strictboolobj:
         assert isbool(obj)
     for obj in object, object(), 1, 'False', [True], {False}:
