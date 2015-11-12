@@ -92,9 +92,13 @@ class StrictBool(with_metaclass(StrictBoolMeta, int)):
         pass
 
     def __str__(self):
+        # only relevant if a derived class overrides __new__
+        # to create real StrictBool instances instead of builtin bools
         return str(bool(self))
 
     def __repr__(self):
+        # only relevant if a derived class overrides __new__
+        # to create real StrictBool instances instead of builtin bools
         return "<%s: %s>" % (moretools.qualname(type(self)), bool(self))
 
 
