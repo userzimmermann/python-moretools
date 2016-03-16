@@ -31,9 +31,7 @@ from inspect import isclass
 import moretools
 
 __all__ = ['StrictBoolMeta', 'StrictBool', 'strictbool',
-           'isboolclass', 'isbool',
-           # aliases for backwards compatibility
-           'Bool', 'boolclass', 'booltype', 'isbooltype']
+           'isboolclass', 'isbool']
 
 
 class StrictBoolMeta(type):
@@ -102,11 +100,7 @@ class StrictBool(with_metaclass(StrictBoolMeta, int)):
         return "<%s: %s>" % (moretools.qualname(type(self)), bool(self))
 
 
-# backwards compatibility
-Bool = StrictBool
-
-
-def strictbool(typename='Bool', true=None, false=None, base=Bool):
+def strictbool(typename='Bool', true=None, false=None, base=StrictBool):
     """Create a custom bool class which can only be initialized
        with builtin bool values, instances of boolclass()-created classes
        or values contained in the given `true` or `false` sequences.
@@ -115,7 +109,7 @@ def strictbool(typename='Bool', true=None, false=None, base=Bool):
       which must be derived from default ``strictbool.base``
       (:class:`moretools.StrictBool`).
     """
-    if not issubclass(base, Bool):
+    if not issubclass(base, StrictBool):
         raise TypeError("%s is no subclass of strictbool.base"
                         % repr(base))
 
@@ -134,9 +128,6 @@ def strictbool(typename='Bool', true=None, false=None, base=Bool):
 
 strictbool.base = StrictBool
 
-# backwards compatibility
-booltype = boolclass = strictbool
-
 
 def isboolclass(cls):
     """Check if `cls` is builtin ``bool``
@@ -145,10 +136,6 @@ def isboolclass(cls):
     if not isclass(cls):
         raise TypeError("isboolclass() arg must be a class")
     return issubclass(cls, (bool, StrictBool))
-
-
-# backwards compatiblity
-isbooltype = isboolclass
 
 
 def isbool(obj):
