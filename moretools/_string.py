@@ -39,11 +39,12 @@ def camelize(string, sep='', joiner=''):
     """
     if not string:
         return ''
+    slen = len(string)
     return _re.sub(
       r'(%s|([0-9]+))([a-z]?)' % (sep or r'[^A-Za-z0-9]'),
       lambda match: (
-        joiner
-        + (match.group(2) or '') # numbers
+        (match.group(2) or '') # numbers
+        + ((match.group(3) or match.end() != slen) and joiner or '')
         + (match.group(3) or '').upper()
         ),
       string[0].upper() + string[1:]) #.capitalize())
