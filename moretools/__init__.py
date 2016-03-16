@@ -21,21 +21,24 @@
 """Many more basic tools for Python 2/3
    extending itertools, functools and operator.
 """
-
-from zetup import find_zetup_config
-
-
-zfg = find_zetup_config(__name__)
-
-__distribution__ = zfg.DISTRIBUTION.find(__path__[0])
-__description__ = zfg.DESCRIPTION
-
-__version__ = zfg.VERSION
-
-__requires__ = zfg.REQUIRES.checked
-
+__import__('zetup').toplevel(__name__, [
+    'qualname',
+    'StrictBool',
+    # TODO: fill in rest!
+], aliases={
+    # six-like aliases for dict... functions
+    'iterkeys': 'dictkeys',
+    'itervalues': 'dictvalues',
+    'iteritems': 'dictitems',
+}, deprecated_aliases={
+    'Bool': 'StrictBool',
+    'boolclass': 'strictbool',
+    'booltype': 'strictbool',
+    'isbooltype': 'isboolclass',
+})
 
 from ._map import *
+from .mapping import *
 from ._repeat import *
 from ._star import *
 from ._empty import *
@@ -63,13 +66,9 @@ from ._types import *
 from ._operator import *
 
 
-# six-like aliases for dict... functions
-iterkeys = dictkeys
-itervalues = dictvalues
-iteritems = dictitems
-
-
 def qualname(cls):
+    """Get ``cls.__qualname__`` with fallback to ``cls.__name__``.
+    """
     try:
         return cls.__qualname__
     except AttributeError:
