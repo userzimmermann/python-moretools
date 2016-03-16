@@ -21,11 +21,11 @@
 """Classes to store args and kwargs and call objects with them.
 """
 
-from ._common import *
+from functools import partial
 
 
 class _caller(object):
-    __slots__ = ['args', 'kwargs']
+    __slots__ = ('args', 'kwargs')
 
     def __init__(self, *args, **kwargs):
         self.args = args

@@ -21,19 +21,20 @@
 """several extended repeat generator functions
 with attr/item or call returning
 """
+__all__ = ['repeatcall', 'repeatattr', 'repeatitem']
 
-from ._common import *
-from ._common import _map
+from six.moves import map
+from functools import partial
 
 
-def repeatcall(obj, times = -1):
+def repeatcall(obj, times=-1):
     while times:
         if times > 0:
             times -= 1
         yield obj()
 
 
-def repeatattr(obj, attr, times = -1):
+def repeatattr(obj, attr, times=-1):
     while times:
         if times > 0:
             times -= 1
@@ -45,10 +46,10 @@ def repeatattrs(obj, *attrs, **kwargs):
     while times:
         if times > 0:
             times -= 1
-        yield _map(partial(getattr, obj), attrs)
+        yield map(partial(getattr, obj), attrs)
 
 
-def repeatitem(obj, key, times = -1):
+def repeatitem(obj, key, times=-1):
     while times:
         if times > 0:
             times -= 1
@@ -60,4 +61,4 @@ def repeatitems(obj, *keys, **kwargs):
     while times:
         if times > 0:
             times -= 1
-        yield _map(partial(getitem, obj), keys)
+        yield map(partial(getitem, obj), keys)

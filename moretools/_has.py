@@ -18,10 +18,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""more functions/classes to check avaiability of attrs/items on objects
-"""
+"""moretools._has
 
-from ._common import *
+[Deprecated] More functions/classes to check avaiability
+of attrs/items on objects.
+
+.. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
+"""
+from six.moves import map
 
 
 def hasattrs(obj, *attrs):

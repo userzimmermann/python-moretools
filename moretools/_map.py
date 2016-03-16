@@ -18,51 +18,47 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with python-moretools.  If not, see <http://www.gnu.org/licenses/>.
 
-"""functions for mapping sequence elements to their attrs/items or calls
+"""moretools._map
+
+[Deprecated] Functions for mapping sequence elements
+or elements of sequences of sequences to their attrs, items or calls.
+
+.. moduleauthor:: Stefan Zimmermann <zimmermann.code@gmail.com>
 """
+from six.moves import map
 
-from ._common import *
-from ._common import _map
+from ._get import getitem
 
-
-def mapattr(seq, attr):
-    return _map(lambda item: getattr(item, attr), seq)
 
 def mapmapattr(seqs, attr):
-    return _map(lambda seq: mapattr(seq, attr), seqs)
+    return map(lambda seq: mapattr(seq, attr), seqs)
 
 def mapattrs(seq, *attrs):
-    return _map(lambda item: _map(partial(getattr, item), attrs), seq)
+    return map(lambda item: map(partial(getattr, item), attrs), seq)
 
 def mapmapattrs(seqs, *attrs):
-    return _map(lambda seq: mapattrs(seq, *attrs), seqs)
+    return map(lambda seq: mapattrs(seq, *attrs), seqs)
 
-
-def mapitem(seq, key):
-    return _map(lambda item: item[key], seq)
 
 def mapmapitem(seqs, key):
-    return _map(lambda seq: mapitem(seq, keys), seqs)
+    return map(lambda seq: mapitem(seq, keys), seqs)
 
 def mapitems(seq, *keys):
-    return _map(lambda item: _map(partial(getitem, item), keys), seq)
+    return map(lambda item: map(partial(getitem, item), keys), seq)
 
 def mapmapitems(seqs, *keys):
-    return _map(lambda seq: mapitems(seq, *keys), seqs)
+    return map(lambda seq: mapitems(seq, *keys), seqs)
 
-
-def mapcall(seq, *args, **kwargs):
-    return _map(lambda item: item(*args, **kwargs), seq)
 
 def mapmapcall(seqs, *args, **kwargs):
-    return _map(lambda seq: mapcall(seq, *args, **kwargs), seqs)
+    return map(lambda seq: mapcall(seq, *args, **kwargs), seqs)
 
 def mapmethodcall(seq, name, *args, **kwargs):
     return mapcall(map(attrgetter(name), seq), *args, **kwargs)
 
 def mapmapmethodcall(seqs, name, *args, **kwargs):
-    return _map(lambda seq: mapmethodcall(seq, name, *args, **kwargs), seqs)
+    return map(lambda seq: mapmethodcall(seq, name, *args, **kwargs), seqs)
 
 
 def mapjoin(seqs, sep=''):
-    return _map(sep.join, seqs)
+    return map(sep.join, seqs)
