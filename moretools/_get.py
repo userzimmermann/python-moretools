@@ -21,19 +21,28 @@
 """functions/classes to get multiple attrs/items from objects at once
 returning an iterator in every case
 """
+from six.moves import map
 
-from ._common import *
-from ._common import _map
+from ._undefined import undefined
+
+
+def getitem(obj, key, default=undefined):
+    if default is undefined:
+        return obj[key]
+    try:
+        return obj[key]
+    except (IndexError, KeyError):
+        return default
 
 
 def getattrs(obj, *attrs):
-    return _map(partial(getattr, obj), attrs)
+    return map(partial(getattr, obj), attrs)
 
 
 class attrsgetter(object):
     __slots__ = ['attrs']
 
-    def __init__(*attrs):
+    def __init__(self, *attrs):
         self.attrs = attrs
 
     def __call__(obj):
@@ -41,13 +50,14 @@ class attrsgetter(object):
 
 
 def getitems(obj, *keys):
-    return _map(partial(getitem, obj), keys)
+    for key in keys:
+        yield obj[key]
 
 
 class itemsgetter(object):
     __slots__ = ['keys']
 
-    def __init__(*keys):
+    def __init__(self, *keys):
         self.keys = keys
 
     def __call__(self, obj):
